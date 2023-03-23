@@ -1,69 +1,65 @@
 const board = document.querySelector(".game");
-var rightPressed = false;
-var leftPressed = false;
 
-// class Platform {
-//   constructor(board) {
-//     this.board = board;
-//   }
 
-//   draw;
-// }
+class Platform {
+  constructor(board) {
+    this.rightPressed = false;
+    this.leftPressed = false;
 
-// class Game {
-//   constructor(game) {
-//     this.game = game;
-//     this.height = game.height;
-//     this.width = game.width;
-//     this.player = new Platform(this);
-//   }
+    this.board = board;
+    this.platform = document.getElementById("platform");
+  }
 
-//   render() {}
-// }
+  draw() {
+    let left = this.platform.style.left;
+    let number = +left.slice(0, -2);
 
-// const game = new Game(board);dsff
-// game.style.minHeight = "100vh";
-// game.style.maxWidth = "400px";
-const platform = document.getElementById("platform");
-platform.style.left = "60px";
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
+    let boardSize = this.board.getBoundingClientRect();
+    let platformSize = this.platform.getBoundingClientRect();
+    
+    if (this.rightPressed && platformSize.right <= boardSize.right) {
+      this.platform.style.left = `${number + 5}px`;
+    } else if (this.leftPressed && platformSize.left >= boardSize.left) {
+      this.platform.style.left = `${number - 5}px`;
+    }
+  }
 
-function keyDownHandler(e) {
-  console.log(e.key);
-  if (e.key == "Right" || e.key == "ArrowRight") {
-    rightPressed = true;
-  } else if (e.key == "Left" || e.key == "ArrowLeft") {
-    leftPressed = true;
+  keyDownHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
+      this.rightPressed = true;
+    } else if (e.key == "Left" || e.key == "ArrowLeft") {
+      this.leftPressed = true;
+    }
+  }
+
+  keyUpHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
+      this.rightPressed = false;
+    } else if (e.key == "Left" || e.key == "ArrowLeft") {
+      this.leftPressed = false;
+    }
   }
 }
 
-function keyUpHandler(e) {
-  console.log(e.key);
+class Game {
+  constructor(board) {
+    this.board = board;
+    this.height = board.height;
+    this.width = board.width;
 
-  if (e.key == "Right" || e.key == "ArrowRight") {
-    rightPressed = false;
-  } else if (e.key == "Left" || e.key == "ArrowLeft") {
-    leftPressed = false;
+    this.platform = new Platform(this);
+  }
+
+  render() {
+    platform.draw();
+    window.requestAnimationFrame(() => this.render());
   }
 }
 
-let i = 0;
-function draw() {
-  let left = platform.style.left;
-  let number = +left.slice(0, -2);
+const game = new Game(board);
+const platform = new Platform(board);
 
-  if (rightPressed) {
-    platform.style.left = `${number + 2}px`;
-  } else if (leftPressed) {
-    platform.style.left = `${number - 2}px`;
-  }
-  i++;
+document.addEventListener("keydown", (e) => platform.keyDownHandler(e), false);
+document.addEventListener("keyup", (e) => platform.keyUpHandler(e), false);
 
-  if (i >= 1000) {
-    window.cancelAnimationFrame(draw);
-  }
-  window.requestAnimationFrame(draw);
-}
-
-draw();
+game.render();
