@@ -1,0 +1,15 @@
+/* body {
+  min-height: 100vh;
+  max-width: 400px;
+  
+} */
+
+.platform {
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 20px;
+  width: 25vw;
+  height: 35px;
+  background-color: rgb(244, 13, 13);
+
+}
