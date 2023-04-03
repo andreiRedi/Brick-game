@@ -1,121 +1,99 @@
-class Ball {
-  constructor(board, platform) {
-    this.board = board.dimension();
-    this.ball = document.querySelector(".circle1");
+const ballHTML = document.querySelector(".circle1");
+const boardHTML = document.querySelector(".game");
+const platformHTML = document.getElementById("platform");
 
-    this.platform = platform;
-    this.ball.style.left = `${Math.ceil(this.board.right / 2)}px`;
-    this.ball.style.top = `${Math.ceil(this.board.bottom) - 100}px`;
+const ballDirection = { dx: 0.5, dy: -0.5 };
+const keys = { rightPressed: false, leftPressed: false };
 
-    this.dx = 0.5;
-    this.dy = -0.5;
+const getDimensions = () => {
+  let obj = {};
+
+  obj["ball"] = ballHTML.getBoundingClientRect();
+  obj["board"] = boardHTML.getBoundingClientRect();
+  obj["platform"] = platformHTML.getBoundingClientRect();
+
+  return obj;
+};
+
+console.log(getDimensions().ball.x);
+
+const initialize = () => {
+  const sizes = getDimensions();
+  ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
+  ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
+
+  document.addEventListener("keydown", keyDownHandler, false);
+  document.addEventListener("keyup", keyUpHandler, false);
+};
+
+const keyDownHandler = (e) => {
+  if (e.key == "Right" || e.key == "ArrowRight") {
+    keys.rightPressed = true;
+  } else if (e.key == "Left" || e.key == "ArrowLeft") {
+    keys.leftPressed = true;
+  }
+};
+
+const keyUpHandler = (e) => {
+  if (e.key == "Right" || e.key == "ArrowRight") {
+    keys.rightPressed = false;
+  } else if (e.key == "Left" || e.key == "ArrowLeft") {
+    keys.leftPressed = false;
+  }
+};
+
+const drawBall = () => {
+  const { ball, platform, board } = getDimensions();
+  const { dx, dy } = ballDirection;
+  const { x, y } = ball;
+
+  const radius = ball.width / 2;
+
+  if (x + dx > board.width || x + dx < 0) {
+    ballDirection.dx = -dx;
   }
 
-  draw() {
-    const { style } = this.ball;
-    let { x, y } = this.dimension();
-    let platform = this.platform.dimension();
-    let radius = this.dimension().width / 2;
-
-    if (x + this.dx > this.board.width - radius || x + this.dx < 0) {
-      this.dx = -this.dx;
-    }
-    console.log(x, platform.x, platform.width);
-    if (y + this.dy < radius) {
-      this.dy = -this.dy;
-    }
-    if (x == platform.x && y == platform.y) {
-      this.dy = -this.dy;
-    }
-    if (y + this.dy < radius) {
-      this.dy = -this.dy;
-    } else if (y + this.dy > this.board.height) {
-      if (x > platform.x && x < platform.x + platform.width) {
-        this.dy = -this.dy;
-      } else {
-        alert("Game over");
-        window.cancelAnimationFrame();
-      }
-    }
-
-    style.left = `${x + this.dx}px`;
-    style.top = `${y + this.dy}px`;
+  if (y + dy < -radius) {
+    ballDirection.dy = -dy;
   }
-
-  dimension() {
-    return this.ball.getBoundingClientRect();
+  if (x == platform.x && y == platform.y) {
+    ballDirection.dy = -dy;
   }
-}
-
-class Platform {
-  constructor(board) {
-    this.rightPressed = false;
-    this.leftPressed = false;
-
-    this.board = board;
-    this.platform = document.getElementById("platform");
-
-    document.addEventListener("keydown", (e) => this.keyDownHandler(e), false);
-    document.addEventListener("keyup", (e) => this.keyUpHandler(e), false);
-  }
-
-  draw() {
-    let left = this.platform.style.left;
-    let number = +left.slice(0, -2);
-
-    let boardSize = this.board.dimension();
-    let platformSize = this.platform.getBoundingClientRect();
-
-    if (this.rightPressed && platformSize.right <= boardSize.right) {
-      this.platform.style.left = `${number + 5}px`;
-    } else if (this.leftPressed && platformSize.left >= boardSize.left) {
-      this.platform.style.left = `${number - 5}px`;
+  if (y + dy < 0) {
+    ballDirection.dy = -dy;
+  } else if (y + dy > board.height) {
+    if (x > platform.x && x < platform.x + platform.width) {
+      ballDirection.dy = -dy;
+    } else {
+      alert("Game over");
+      window.cancelAnimationFrame(renderGame);
+      return;
     }
   }
+  console.log(ball);
+  ballHTML.style.left = `${x + dx}px`;
+  ballHTML.style.top = `${y + dy}px`;
+};
 
-  keyDownHandler(e) {
-    if (e.key == "Right" || e.key == "ArrowRight") {
-      this.rightPressed = true;
-    } else if (e.key == "Left" || e.key == "ArrowLeft") {
-      this.leftPressed = true;
-    }
+const drawPlatform = () => {
+  let left = platformHTML.style.left;
+  let number = +left.slice(0, -2);
+
+  let { board, platform } = getDimensions();
+
+  if (keys.rightPressed && platform.right <= board.right) {
+    platformHTML.style.left = `${number + 5}px`;
+  } else if (keys.leftPressed && platform.left >= board.left) {
+    platformHTML.style.left = `${number - 5}px`;
   }
+};
 
-  keyUpHandler(e) {
-    if (e.key == "Right" || e.key == "ArrowRight") {
-      this.rightPressed = false;
-    } else if (e.key == "Left" || e.key == "ArrowLeft") {
-      this.leftPressed = false;
-    }
-  }
+const renderGame = () => {
+  drawBall();
+  drawPlatform();
+  window.requestAnimationFrame(() => renderGame());
+};
 
-  dimension() {
-    return this.platform.getBoundingClientRect();
-  }
-}
+initialize();
 
-class Game {
-  constructor(platform) {
-    this.board = document.querySelector(".game");
-    this.height = this.board.height;
-    this.width = this.board.width;
-
-    this.platform = new Platform(this);
-    this.ball = new Ball(this, this.platform);
-  }
-
-  render() {
-    this.ball.draw();
-    this.platform.draw();
-
-    window.requestAnimationFrame(() => this.render());
-  }
-
-  dimension() {
-    return this.board.getBoundingClientRect();
-  }
-}
-
-const game = new Game();
-
-game.render();
+renderGame();
