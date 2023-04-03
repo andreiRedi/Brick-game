@@ -2,7 +2,7 @@ const ballHTML = document.querySelector(".circle1");
 const boardHTML = document.querySelector(".game");
 const platformHTML = document.getElementById("platform");
 
-const ballDirection = { dx: 0.5, dy: -0.5 };
+const ballDirection = { dx: 1, dy: -1 };
 const keys = { rightPressed: false, leftPressed: false };
 
 const getDimensions = () => {
@@ -15,7 +15,7 @@ const getDimensions = () => {
   return obj;
 };
 
-console.log(getDimensions().ball.x);
+
 
 const initialize = () => {
   const sizes = getDimensions();
@@ -45,11 +45,11 @@ const keyUpHandler = (e) => {
 const drawBall = () => {
   const { ball, platform, board } = getDimensions();
   const { dx, dy } = ballDirection;
-  const { x, y } = ball;
+  const { x, y, right, bottom, top } = ball;
 
   const radius = ball.width / 2;
 
-  if (x + dx > board.width || x + dx < 0) {
+  if (right + dx > board.width || x + dx < 0) {
     ballDirection.dx = -dx;
   }
 
@@ -59,18 +59,19 @@ const drawBall = () => {
   if (x == platform.x && y == platform.y) {
     ballDirection.dy = -dy;
   }
+
   if (y + dy < 0) {
     ballDirection.dy = -dy;
-  } else if (y + dy > board.height) {
+  } else if (bottom + dy > platform.top) {
     if (x > platform.x && x < platform.x + platform.width) {
       ballDirection.dy = -dy;
-    } else {
+    }  else if (bottom + dy > board.bottom) {
       alert("Game over");
       window.cancelAnimationFrame(renderGame);
       return;
     }
   }
-  console.log(ball);
+
   ballHTML.style.left = `${x + dx}px`;
   ballHTML.style.top = `${y + dy}px`;
 };

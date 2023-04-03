@@ -10,6 +10,7 @@ body {
 }
 
 .platform {
+  opacity: 0.2;
   position: fixed;
   bottom: 0;
   width: 25vw;
