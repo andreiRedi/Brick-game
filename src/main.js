@@ -1,32 +1,43 @@
 class Ball {
-  constructor(board) {
+  constructor(board, platform) {
     this.board = board.dimension();
     this.ball = document.querySelector(".circle1");
 
+    this.platform = platform;
     this.ball.style.left = `${Math.ceil(this.board.right / 2)}px`;
     this.ball.style.top = `${Math.ceil(this.board.bottom) - 100}px`;
 
-    this.dx = 2;
-    this.dy = -2;
+    this.dx = 0.5;
+    this.dy = -0.5;
   }
 
   draw() {
     const { style } = this.ball;
     let { x, y } = this.dimension();
+    let platform = this.platform.dimension();
     let radius = this.dimension().width / 2;
 
     if (x + this.dx > this.board.width - radius || x + this.dx < 0) {
       this.dx = -this.dx;
     }
-
-    if (y + this.dy < 0) {
+    console.log(x, platform.x, platform.width);
+    if (y + this.dy < radius) {
       this.dy = -this.dy;
     }
-
-    if (y + this.dy > this.board.height - radius) {
-      alert("Game over");
-      window.cancelAnimationFrame();
+    if (x == platform.x && y == platform.y) {
+      this.dy = -this.dy;
     }
+    if (y + this.dy < radius) {
+      this.dy = -this.dy;
+    } else if (y + this.dy > this.board.height) {
+      if (x > platform.x && x < platform.x + platform.width) {
+        this.dy = -this.dy;
+      } else {
+        alert("Game over");
+        window.cancelAnimationFrame();
+      }
+    }
+
     style.left = `${x + this.dx}px`;
     style.top = `${y + this.dy}px`;
   }
@@ -37,11 +48,10 @@ class Ball {
 }
 
 class Platform {
-  constructor(board, platform) {
+  constructor(board) {
     this.rightPressed = false;
     this.leftPressed = false;
 
-    this.platform = platform;
     this.board = board;
     this.platform = document.getElementById("platform");
 
@@ -78,10 +88,14 @@ class Platform {
       this.leftPressed = false;
     }
   }
+
+  dimension() {
+    return this.platform.getBoundingClientRect();
+  }
 }
 
 class Game {
-  constructor() {
+  constructor(platform) {
     this.board = document.querySelector(".game");
     this.height = this.board.height;
     this.width = this.board.width;
