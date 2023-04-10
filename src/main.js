@@ -1,7 +1,7 @@
 const ballHTML = document.querySelector(".circle1");
 const boardHTML = document.querySelector(".game");
 const platformHTML = document.getElementById("platform");
-
+// test
 const ballDirection = { dx: 1, dy: -1 };
 const keys = { rightPressed: false, leftPressed: false };
 
