@@ -1,9 +1,14 @@
 const ballHTML = document.querySelector(".circle1");
 const boardHTML = document.querySelector(".game");
 const platformHTML = document.getElementById("platform");
-// test
+
+window.addEventListener('load', () => {
+  initialize();
+});
+
 const ballDirection = { dx: 2, dy: -2 };
 const keys = { rightPressed: false, leftPressed: false };
+let lives = 3;
 
 const getDimensions = () => {
   let obj = {};
@@ -20,11 +25,11 @@ const getDimensions = () => {
 const initialize = () => {
   const sizes = getDimensions();
 
-  // ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
-  // ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
+  ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
+  ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
 
-  ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
-  ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
+  // ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
+  // ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
 
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
@@ -75,16 +80,33 @@ const drawBall = () => {
     if (x > platform.x && x < platform.x + platform.width) {
       ballDirection.dy = -dy;
     } else if (bottom + dy > board.bottom) {
-      alert("Game over");
-      window.cancelAnimationFrame(renderGame);
-      resetGame();
-      return;
+      lives--;
+      if (lives <= 0) {
+        alert("Game over");
+        window.cancelAnimationFrame(renderGame);
+        resetGame();
+        document.location.reload();
+        return;
+      } else {
+        alert("You lost a life. You have " + lives + " lives left.");
+        resetBall();
+        return;
+      }
     }
   }
 
   ballHTML.style.left = `${x + dx}px`;
   ballHTML.style.top = `${y + dy}px`;
 };
+
+const resetBall = () => {
+
+  ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
+  ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
+
+};
+
+
 
 const drawPlatform = () => {
   let left = platformHTML.style.left;
