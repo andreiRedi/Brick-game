@@ -19,11 +19,17 @@ const getDimensions = () => {
 
 const initialize = () => {
   const sizes = getDimensions();
+
+  // ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
+  // ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
+
   ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
   ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
 
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
+
+  build();
 };
 
 const keyDownHandler = (e) => {
@@ -69,8 +75,10 @@ const drawBall = () => {
     if (x > platform.x && x < platform.x + platform.width) {
       ballDirection.dy = -dy;
     } else if (bottom + dy > board.bottom) {
+      alert("Game over");
       window.cancelAnimationFrame(renderGame);
-      return
+      resetGame();
+      return;
     }
   }
 
@@ -92,6 +100,7 @@ const drawPlatform = () => {
 };
 
 const build = () => {
+  document.querySelectorAll('.brickRow').forEach(e => e.remove());
   let brickIndex = 0
   for (let index = 0; index < 9; index++) {
     let element = document.createElement('div')
@@ -113,15 +122,35 @@ function collisionDetection() {
   const { ball } = getDimensions();
   const { dy } = ballDirection;
   const { x, y } = ball;
+  let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
     if (x > brick.x && x < brick.x + brick.width && y > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible") {
       bricks[c].innerHTML = "hidden"
       bricks[c].style.opacity = "0"
       ballDirection.dy = -dy;
+      visibleBricks++;
+    }
+    if (bricks[c].innerHTML === "visible") {
+      visibleBricks++;
     }
   }
+  if (visibleBricks === 0) {
+    alert("You Win!");
+    resetGame()
+  }
 }
+
+const resetGame = () => {
+  // ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
+  // ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
+  initialize();
+  ballDirection.dx = 2;
+  ballDirection.dy = -2;
+  //build();
+  // keys.rightPressed = false;
+  // keys.leftPressed = false;
+};
 
 const renderGame = () => {
   drawBall();
@@ -132,7 +161,5 @@ const renderGame = () => {
 };
 
 initialize();
-build();
-
-
+// build();
 renderGame();
