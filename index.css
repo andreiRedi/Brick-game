@@ -11,7 +11,6 @@ body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .brick {
@@ -47,9 +46,39 @@ body {
   background: #4bc475;
 }
 
-/* .circle2 {
-  width: 150px;
-  height: 150px;
-  background: #a1a1a1;
-  border: 1px solid #000;
-} */
+dialog {
+  cursor: pointer;
+}
+dialog::backdrop {
+  opacity: 0.5;
+  background-color: rgb(97, 4, 4);
+  backdrop-filter: blur(5px);
+}
+dialog {
+  box-shadow: 5px 10px #888888;
+  border-radius: 8px;
+  border: none;
+}
+dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#cancel {
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 12px 32px;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+#closeDialogFooter {
+  background-color: gray;
+  border: none;
+  color: white;
+  padding: 12px 32px;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}

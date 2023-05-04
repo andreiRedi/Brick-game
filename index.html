@@ -12,6 +12,24 @@
 </head>
 
 <body>
+    <!-- A modal dialog containing a form -->
+    <dialog id="favDialog">
+        <form method="dialog">
+            <h2>GAME IS PAUSED</h2> <br>
+            <p>Press P to continue...</p>
+
+            <div>
+                <button id="cancel" value="cancel" formmethod="dialog">Continue</button>
+                <button id="reset" value="default">Reset game</button>
+            </div>
+        </form>
+    </dialog>
+    <!-- <p>
+        <button id="showDialog">Show the dialog</button>
+    </p> -->
+    <output></output>
+
+
     <div class="game" id="game">
         <div class="circleBase circle1"></div>
         <div id="platform" class="platform"></div>
