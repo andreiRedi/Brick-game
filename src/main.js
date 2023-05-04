@@ -6,9 +6,10 @@ window.addEventListener('load', () => {
   initialize();
 });
 
-const ballDirection = { dx: 2, dy: -2 };
-const keys = { rightPressed: false, leftPressed: false };
+const ballDirection = { dx: 0, dy: 0 };
+const keys = { rightPressed: false, leftPressed: false, spacebarPressed: false };
 let lives = 3;
+let gameStarted = false;
 
 const getDimensions = () => {
   let obj = {};
@@ -20,16 +21,11 @@ const getDimensions = () => {
   return obj;
 };
 
-
-
 const initialize = () => {
   const sizes = getDimensions();
 
   ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
   ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
-
-  // ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
-  // ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
 
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
@@ -42,9 +38,20 @@ const keyDownHandler = (e) => {
     keys.rightPressed = true;
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
     keys.leftPressed = true;
+  } else if (e.code === "Space" && !gameStarted) {
+    gameStarted = true;
+    keys.spacebarPressed = true;
+    ballDirection.dx = 2;
+    ballDirection.dy = -2;
   } else if (e.key == "Escape") {
     alert("Escape")
     window.cancelAnimationFrame(renderGame);
+  }
+
+  if (keys.rightPressed) {
+    drawPlatform("right");
+  } else if (keys.leftPressed) {
+    drawPlatform("left");
   }
 };
 
@@ -53,6 +60,8 @@ const keyUpHandler = (e) => {
     keys.rightPressed = false;
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
     keys.leftPressed = false;
+  } else if (e.code === "Space") {
+    keys.spacebarPressed = false;
   }
 };
 
@@ -90,6 +99,7 @@ const drawBall = () => {
       } else {
         alert("You lost a life. You have " + lives + " lives left.");
         resetBall();
+        gameStarted = false;
         return;
       }
     }
@@ -103,22 +113,41 @@ const resetBall = () => {
 
   ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
   ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
+  ballDirection.dx = 0;
+  ballDirection.dy = 0;
 
 };
-
-
 
 const drawPlatform = () => {
   let left = platformHTML.style.left;
   let number = +left.slice(0, -2);
 
-  let { board, platform } = getDimensions();
+  const { board, platform } = getDimensions();
+  const radius = ballHTML.offsetWidth / 2;
+  const platformCenter = platform.left + platform.width / 2;
 
   if (keys.rightPressed && platform.right <= board.right) {
     platformHTML.style.left = `${number + 5}px`;
+    if (!gameStarted) {
+      ballHTML.style.left = `${platformCenter - radius}px`;
+    }
   } else if (keys.leftPressed && platform.left >= board.left) {
     platformHTML.style.left = `${number - 5}px`;
+    if (!gameStarted) {
+      ballHTML.style.left = `${platformCenter - radius}px`;
+    }
+  } else if (!gameStarted) {
+    ballHTML.style.left = `${platformCenter - radius}px`;
   }
+};
+
+const moveBallWithPlatform = () => {
+  const { ball, platform } = getDimensions();
+  const radius = ball.width / 2;
+  const platformCenter = platform.left + platform.width / 2;
+
+  ballHTML.style.left = `${platformCenter - radius}px`;
+  ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
 };
 
 const build = () => {
@@ -147,7 +176,7 @@ function collisionDetection() {
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
-    if (x > brick.x && x < brick.x + brick.width && y > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible") {
+    if ((x > brick.x || x - 25 > brick.x) && (x < brick.x + brick.width || x + 25 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
       bricks[c].innerHTML = "hidden"
       bricks[c].style.opacity = "0"
       ballDirection.dy = -dy;
@@ -160,18 +189,14 @@ function collisionDetection() {
   if (visibleBricks === 0) {
     alert("You Win!");
     resetGame()
+    document.location.reload();
   }
 }
 
 const resetGame = () => {
-  // ballHTML.style.left = `${Math.ceil(sizes.board.right / 2)}px`;
-  // ballHTML.style.top = `${Math.ceil(sizes.board.bottom) - 100}px`;
   initialize();
-  ballDirection.dx = 2;
-  ballDirection.dy = -2;
-  //build();
-  // keys.rightPressed = false;
-  // keys.leftPressed = false;
+  lives = 3;
+  gameStarted = false;
 };
 
 const renderGame = () => {
@@ -183,5 +208,4 @@ const renderGame = () => {
 };
 
 initialize();
-// build();
 renderGame();
