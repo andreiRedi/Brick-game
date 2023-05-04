@@ -38,8 +38,8 @@ const initialize = () => {
 
   ballHTML.style.left = `${Math.ceil(
     platformHTML.getBoundingClientRect().left +
-      platformHTML.offsetWidth / 2 -
-      ballHTML.offsetWidth / 2
+    platformHTML.offsetWidth / 2 -
+    ballHTML.offsetWidth / 2
   )}px`;
   ballHTML.style.top = `${Math.ceil(
     platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
@@ -132,8 +132,8 @@ const drawBall = () => {
 const resetBall = () => {
   ballHTML.style.left = `${Math.ceil(
     platformHTML.getBoundingClientRect().left +
-      platformHTML.offsetWidth / 2 -
-      ballHTML.offsetWidth / 2
+    platformHTML.offsetWidth / 2 -
+    ballHTML.offsetWidth / 2
   )}px`;
   ballHTML.style.top = `${Math.ceil(
     platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
@@ -195,22 +195,23 @@ const build = () => {
 };
 
 function collisionDetection() {
-  let bricks = document.getElementsByClassName("brick");
+  let bricks = document.getElementsByClassName("brick")
   const { ball } = getDimensions();
   const { dx, dy } = ballDirection;
   const { x, y } = ball;
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
-    let brick = bricks[c].getBoundingClientRect();
-    if (
-      (x > brick.x || x - 25 > brick.x) &&
-      (x < brick.x + brick.width || x + 25 < brick.x + brick.width) &&
-      (y > brick.y || y + 50 > brick.y) &&
-      (y < brick.y + brick.height || y + 50 < brick.y + brick.height) &&
-      bricks[c].innerHTML === "visible"
-    ) {
-      bricks[c].innerHTML = "hidden";
-      bricks[c].style.opacity = "0";
+    let brick = bricks[c].getBoundingClientRect()
+    if ((x > brick.x - 50 && x < brick.x && y + 50 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx > 0) ||
+      (x > brick.x + brick.width + 50 && x < brick.x + brick.width - 50 && y + 50 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx < 0)) {
+      bricks[c].innerHTML = "hidden"
+      bricks[c].style.opacity = "0"
+      ballDirection.dx = -dx;
+      visibleBricks++;
+      break
+    } else if ((x > brick.x || x - 50 > brick.x) && (x < brick.x + brick.width || x + 50 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
+      bricks[c].innerHTML = "hidden"
+      bricks[c].style.opacity = "0"
       ballDirection.dy = -dy;
       visibleBricks++;
       break
@@ -221,7 +222,7 @@ function collisionDetection() {
   }
   if (visibleBricks === 0) {
     alert("You Win!");
-    resetGame();
+    resetGame()
     document.location.reload();
   }
 }
