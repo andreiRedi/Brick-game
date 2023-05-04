@@ -171,16 +171,24 @@ const build = () => {
 function collisionDetection() {
   let bricks = document.getElementsByClassName("brick")
   const { ball } = getDimensions();
-  const { dy } = ballDirection;
+  const { dx, dy } = ballDirection;
   const { x, y } = ball;
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
-    if ((x > brick.x || x - 25 > brick.x) && (x < brick.x + brick.width || x + 25 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
+    if ((x > brick.x - 50 && x < brick.x && y + 50 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx > 0) ||
+      (x > brick.x + brick.width + 50 && x < brick.x + brick.width - 50 && y + 50 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx < 0)) {
+      bricks[c].innerHTML = "hidden"
+      bricks[c].style.opacity = "0"
+      ballDirection.dx = -dx;
+      visibleBricks++;
+      break
+    } else if ((x > brick.x || x - 50 > brick.x) && (x < brick.x + brick.width || x + 50 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
       bricks[c].innerHTML = "hidden"
       bricks[c].style.opacity = "0"
       ballDirection.dy = -dy;
       visibleBricks++;
+      break
     }
     if (bricks[c].innerHTML === "visible") {
       visibleBricks++;
