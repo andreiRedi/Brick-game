@@ -197,7 +197,7 @@ const build = () => {
 function collisionDetection() {
   let bricks = document.getElementsByClassName("brick");
   const { ball } = getDimensions();
-  const { dy } = ballDirection;
+  const { dx, dy } = ballDirection;
   const { x, y } = ball;
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
@@ -213,6 +213,7 @@ function collisionDetection() {
       bricks[c].style.opacity = "0";
       ballDirection.dy = -dy;
       visibleBricks++;
+      break
     }
     if (bricks[c].innerHTML === "visible") {
       visibleBricks++;
