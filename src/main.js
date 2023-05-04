@@ -1,4 +1,4 @@
-const ballHTML = document.querySelector(".circle1");
+let ballHTML = document.querySelector(".circle1");
 const boardHTML = document.querySelector(".game");
 const platformHTML = document.getElementById("platform");
 
@@ -15,7 +15,11 @@ window.addEventListener("load", () => {
 });
 
 const ballDirection = { dx: 0, dy: 0 };
-const keys = { rightPressed: false, leftPressed: false, spacebarPressed: false };
+const keys = {
+  rightPressed: false,
+  leftPressed: false,
+  spacebarPressed: false,
+};
 let lives = 3;
 let gameStarted = false;
 
@@ -60,11 +64,8 @@ const keyDownHandler = (e) => {
   } else if (e.code === "Space" && !gameStarted) {
     gameStarted = true;
     keys.spacebarPressed = true;
-    ballDirection.dx = 2;
-    ballDirection.dy = -2;
-  } else if (e.key == "Escape") {
-    alert("Escape")
-    window.cancelAnimationFrame(renderGame);
+    ballDirection.dx = -2;
+    ballDirection.dy = 2;
   }
 
   if (keys.rightPressed) {
@@ -129,12 +130,16 @@ const drawBall = () => {
 };
 
 const resetBall = () => {
-
-  ballHTML.style.left = `${Math.ceil(platformHTML.getBoundingClientRect().left + platformHTML.offsetWidth / 2 - ballHTML.offsetWidth / 2)}px`;
-  ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
+  ballHTML.style.left = `${Math.ceil(
+    platformHTML.getBoundingClientRect().left +
+      platformHTML.offsetWidth / 2 -
+      ballHTML.offsetWidth / 2
+  )}px`;
+  ballHTML.style.top = `${Math.ceil(
+    platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
+  )}px`;
   ballDirection.dx = 0;
   ballDirection.dy = 0;
-
 };
 
 const drawPlatform = () => {
@@ -166,7 +171,9 @@ const moveBallWithPlatform = () => {
   const platformCenter = platform.left + platform.width / 2;
 
   ballHTML.style.left = `${platformCenter - radius}px`;
-  ballHTML.style.top = `${Math.ceil(platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight)}px`;
+  ballHTML.style.top = `${Math.ceil(
+    platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
+  )}px`;
 };
 
 const build = () => {
@@ -194,10 +201,16 @@ function collisionDetection() {
   const { x, y } = ball;
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
-    let brick = bricks[c].getBoundingClientRect()
-    if ((x > brick.x || x - 25 > brick.x) && (x < brick.x + brick.width || x + 25 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
-      bricks[c].innerHTML = "hidden"
-      bricks[c].style.opacity = "0"
+    let brick = bricks[c].getBoundingClientRect();
+    if (
+      (x > brick.x || x - 25 > brick.x) &&
+      (x < brick.x + brick.width || x + 25 < brick.x + brick.width) &&
+      (y > brick.y || y + 50 > brick.y) &&
+      (y < brick.y + brick.height || y + 50 < brick.y + brick.height) &&
+      bricks[c].innerHTML === "visible"
+    ) {
+      bricks[c].innerHTML = "hidden";
+      bricks[c].style.opacity = "0";
       ballDirection.dy = -dy;
       visibleBricks++;
     }
@@ -207,7 +220,7 @@ function collisionDetection() {
   }
   if (visibleBricks === 0) {
     alert("You Win!");
-    resetGame()
+    resetGame();
     document.location.reload();
   }
 }
@@ -218,13 +231,12 @@ const resetGame = () => {
   gameStarted = false;
 };
 
+let animation;
 const renderGame = () => {
   drawBall();
   drawPlatform();
   collisionDetection();
-
-  window.requestAnimationFrame(() => renderGame());
-  if (isPaused) return;
+  animation = window.requestAnimationFrame(() => renderGame());
 };
 
 initialize();
@@ -233,13 +245,18 @@ renderGame();
 document.addEventListener(
   "keydown",
   (e) => {
-    if (e.key == "p") {
-      isPaused = !isPaused;
+    ballHTML = document.querySelector(".circle1");
 
+    if (e.key == "p") {
+      window.cancelAnimationFrame(animation);
+
+      isPaused = !isPaused;
       if (isPaused) {
-        window.cancelAnimationFrame(renderGame);
         favDialog.showModal();
+        ballHTML = document.querySelector(".circle1");
+        console.log(ballHTML.getBoundingClientRect(), ballDirection);
       } else {
+        console.log(ballHTML.getBoundingClientRect(), ballDirection);
         favDialog.close();
         renderGame();
       }
@@ -253,6 +270,6 @@ confirmBtn.addEventListener("click", () => {
 });
 
 // "Confirm" button triggers "close" on dialog because of [method="dialog"]
-favDialog.addEventListener("close", () => {
-  renderGame();
-});
+// favDialog.addEventListener("close", () => {
+//   renderGame();
+// });
