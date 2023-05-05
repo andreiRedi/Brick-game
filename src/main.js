@@ -143,20 +143,20 @@ const resetBall = () => {
 };
 
 const drawPlatform = () => {
-  let left = platformHTML.style.left;
-  let number = +left.slice(0, -2);
+  const platformRect = platformHTML.getBoundingClientRect();
+  const platformLeft = platformRect.left;
 
   const { board, platform } = getDimensions();
   const radius = ballHTML.offsetWidth / 2;
   const platformCenter = platform.left + platform.width / 2;
 
   if (keys.rightPressed && platform.right <= board.right) {
-    platformHTML.style.left = `${number + 5}px`;
+    platformHTML.style.left = `${platformLeft + 5}px`;
     if (!gameStarted) {
       ballHTML.style.left = `${platformCenter - radius}px`;
     }
   } else if (keys.leftPressed && platform.left >= board.left) {
-    platformHTML.style.left = `${number - 5}px`;
+    platformHTML.style.left = `${platformLeft - 5}px`;
     if (!gameStarted) {
       ballHTML.style.left = `${platformCenter - radius}px`;
     }
@@ -164,6 +164,30 @@ const drawPlatform = () => {
     ballHTML.style.left = `${platformCenter - radius}px`;
   }
 };
+
+/* const drawPlatform = () => {
+  const platformRect = platformHTML.getBoundingClientRect();
+  const platformWidth = platformHTML.offsetWidth;
+  const platformCenter = platformRect.left + platformWidth / 2;
+
+  const { board, platform } = getDimensions();
+  const radius = ballHTML.offsetWidth / 2;
+
+  if (keys.rightPressed && platform.right <= board.right) {
+    platformHTML.style.left = `${platformRect.left + 5}px`;
+    if (!gameStarted) {
+      ballHTML.style.left = `${platformCenter - radius}px`;
+    }
+  } else if (keys.leftPressed && platform.left >= board.left) {
+    platformHTML.style.left = `${platformRect.left - 5}px`;
+    if (!gameStarted) {
+      ballHTML.style.left = `${platformCenter - radius}px`;
+    }
+  } else if (!gameStarted) {
+    ballHTML.style.left = `${platformCenter - radius}px`;
+  }
+}; */
+
 
 const moveBallWithPlatform = () => {
   const { ball, platform } = getDimensions();
