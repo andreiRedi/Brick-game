@@ -22,6 +22,7 @@ const keys = {
 };
 let lives = 3;
 let gameStarted = false;
+let score = 0;
 
 const getDimensions = () => {
   let obj = {};
@@ -232,12 +233,16 @@ function collisionDetection() {
       bricks[c].style.opacity = "0"
       ballDirection.dx = -dx;
       visibleBricks++;
+      score += 100;
+      drawScore();
       break
     } else if ((x > brick.x || x - 50 > brick.x) && (x < brick.x + brick.width || x + 50 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
       bricks[c].innerHTML = "hidden"
       bricks[c].style.opacity = "0"
       ballDirection.dy = -dy;
       visibleBricks++;
+      score += 100;
+      drawScore();
       break
     }
     if (bricks[c].innerHTML === "visible") {
@@ -249,6 +254,11 @@ function collisionDetection() {
     resetGame()
     document.location.reload();
   }
+}
+
+const drawScore = () => {
+  const scoreHTML = document.querySelector("#score");
+  scoreHTML.innerHTML = `Score: ${score}`;
 }
 
 const resetGame = () => {
