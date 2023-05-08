@@ -180,12 +180,12 @@ const drawPlatform = () => {
   const platformCenter = platform.left + platform.width / 2;
 
   if (keys.rightPressed && platform.right <= board.right) {
-    platformHTML.style.left = `${platformLeft + 5}px`;
+    platformHTML.style.left = `${platformLeft + 8}px`;
     if (!gameStarted) {
       ballHTML.style.left = `${platformCenter - radius}px`;
     }
   } else if (keys.leftPressed && platform.left >= board.left) {
-    platformHTML.style.left = `${platformLeft - 5}px`;
+    platformHTML.style.left = `${platformLeft - 8}px`;
     if (!gameStarted) {
       ballHTML.style.left = `${platformCenter - radius}px`;
     }
@@ -241,7 +241,12 @@ const build = () => {
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
       element2.classList.add("brick");
-      element2.innerHTML = "visible";
+      element2.classList.add("one");
+      element2.innerHTML = "1";
+      if (brickIndex % 2 === 1) {
+        element2.classList.add("two");
+        element2.innerHTML = "2";
+      }
       element.appendChild(element2);
     }
   }
@@ -255,28 +260,37 @@ function collisionDetection() {
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
-    if ((x > brick.x - 20 && x < brick.x && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx > 0) ||
-      (x < brick.x + brick.width && x + 15 > brick.x + brick.width && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx < 0)) {
-      bricks[c].innerHTML = "hidden"
-      bricks[c].style.opacity = "0"
+    if ((x > brick.x - 20 && x < brick.x && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx > 0) ||
+      (x < brick.x + brick.width && x + 15 > brick.x + brick.width && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx < 0)) {
+      if (bricks[c].innerHTML === "2") {
+        bricks[c].innerHTML = "1"
+        bricks[c].classList.remove("two")
+      } else {
+        bricks[c].innerHTML = "hidden"
+        bricks[c].classList.remove("one")
+      }
       ballDirection.dx = -dx;
       score += 100;
       drawScore();
-    } else if ((x > brick.x || x - 20 > brick.x) && (x < brick.x + brick.width || x + 40 < brick.x + brick.width) && (y > brick.y || y + 40 > brick.y) && (y < brick.y + brick.height || y + 40 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
-      bricks[c].innerHTML = "hidden"
-      bricks[c].style.opacity = "0"
+    } else if ((x > brick.x || x - 20 > brick.x) && (x < brick.x + brick.width || x + 40 < brick.x + brick.width) && (y > brick.y || y + 40 > brick.y) && (y < brick.y + brick.height || y + 40 < brick.y + brick.height) && bricks[c].innerHTML !== "hidden") {
+      if (bricks[c].innerHTML === "2") {
+        bricks[c].innerHTML = "1"
+        bricks[c].classList.remove("two")
+      } else {
+        bricks[c].innerHTML = "hidden"
+        bricks[c].classList.remove("one")
+      }
       ballDirection.dy = -dy;
       score += 100;
       drawScore();
     }
-    if (bricks[c].innerHTML === "visible") {
+    if (bricks[c].innerHTML !== "hidden") {
       visibleBricks++;
     }
   }
   if (visibleBricks === 0) {
+    score += lives * 500
     alert("You Win!");
-    const scoreHTML = document.querySelector("#score");
-    scoreHTML.style.fontSize = 200
     resetGame()
     document.location.reload();
   }
