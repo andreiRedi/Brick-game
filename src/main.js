@@ -24,6 +24,7 @@ let lives = 3;
 let gameStarted = false;
 let score = 0;
 let time = 0;
+let timerStarted = false;
 
 const getDimensions = () => {
   let obj = {};
@@ -53,6 +54,7 @@ const initialize = () => {
   build();
   drawScore()
   drawLives()
+
   // "Show the dialog" button opens the <dialog> modally
   // showButton.addEventListener("click", () => {
   //   favDialog.showModal();
@@ -69,7 +71,10 @@ const keyDownHandler = (e) => {
     keys.spacebarPressed = true;
     ballDirection.dx = -2;
     ballDirection.dy = 2;
-    setInterval(updateTimer, 1000);
+    if (!timerStarted) {
+      timerStarted = true;
+      setInterval(updateTimer, 1000);
+    }
   }
 
   if (keys.rightPressed) {
@@ -292,6 +297,7 @@ const renderGame = () => {
   animation = window.requestAnimationFrame(() => renderGame());
 };
 
+// setInterval(updateTimer, 1000);
 initialize();
 renderGame();
 
