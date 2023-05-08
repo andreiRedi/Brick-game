@@ -23,6 +23,7 @@ const keys = {
 let lives = 3;
 let gameStarted = false;
 let score = 0;
+let time = 0;
 
 const getDimensions = () => {
   let obj = {};
@@ -50,7 +51,8 @@ const initialize = () => {
   document.addEventListener("keyup", keyUpHandler, false);
 
   build();
-
+  drawScore()
+  drawLives()
   // "Show the dialog" button opens the <dialog> modally
   // showButton.addEventListener("click", () => {
   //   favDialog.showModal();
@@ -67,6 +69,7 @@ const keyDownHandler = (e) => {
     keys.spacebarPressed = true;
     ballDirection.dx = -2;
     ballDirection.dy = 2;
+    setInterval(updateTimer, 1000);
   }
 
   if (keys.rightPressed) {
@@ -111,14 +114,15 @@ const drawBall = () => {
       ballDirection.dy = -dy;
     } else if (bottom + dy > board.bottom) {
       lives--;
+      drawLives();
       if (lives <= 0) {
-        alert("Game over");
+        // alert("Game over");
         window.cancelAnimationFrame(renderGame);
         resetGame();
         document.location.reload();
         return;
       } else {
-        alert("You lost a life. You have " + lives + " lives left.");
+        // alert("You lost a life. You have " + lives + " lives left.");
         resetBall();
         gameStarted = false;
         return;
@@ -259,6 +263,19 @@ function collisionDetection() {
 const drawScore = () => {
   const scoreHTML = document.querySelector("#score");
   scoreHTML.innerHTML = `Score: ${score}`;
+}
+
+const drawLives = () => {
+  const scoreHTML = document.querySelector("#lives");
+  scoreHTML.innerHTML = `Lives: ${lives}`;
+}
+
+const updateTimer = () => {
+  const timerHTML = document.querySelector("#timer");
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  timerHTML.innerHTML = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+  time++;
 }
 
 const resetGame = () => {
