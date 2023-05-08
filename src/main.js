@@ -116,7 +116,26 @@ const drawBall = () => {
     ballDirection.dy = -dy;
   } else if (bottom + dy > platform.top) {
     if (x > platform.x && x < platform.x + platform.width) {
-      ballDirection.dy = -dy;
+      if (x > platform.x + platform.width - platform.width / 6 * 1) {
+        ballDirection.dx = 4
+        ballDirection.dy = -1
+      } else if (x > platform.x + platform.width - platform.width / 6 * 2) {
+        ballDirection.dx = 2.5
+        ballDirection.dy = -1.5
+      } else if (x > platform.x + platform.width - platform.width / 6 * 3) {
+        ballDirection.dx = 1
+        ballDirection.dy = -3
+      } else if (x > platform.x + platform.width - platform.width / 6 * 4) {
+        ballDirection.dx = -1
+        ballDirection.dy = -3
+      } else if (x > platform.x + platform.width - platform.width / 6 * 5) {
+        ballDirection.dx = -2.5
+        ballDirection.dy = -1.5
+      } else {
+        ballDirection.dx = -4
+        ballDirection.dy = -1
+      }
+      //ballDirection.dy = -dy;
     } else if (bottom + dy > board.bottom) {
       lives--;
       drawLives();
@@ -213,12 +232,12 @@ const moveBallWithPlatform = () => {
 const build = () => {
   document.querySelectorAll(".brickRow").forEach((e) => e.remove());
   let brickIndex = 0;
-  for (let index = 0; index < 9; index++) {
+  for (let index = 0; index < 15; index++) {
     let element = document.createElement("div");
     element.setAttribute("id", "brickRow" + index);
     element.classList.add("brickRow");
     document.getElementById("game").appendChild(element);
-    for (let index2 = 0; index2 < 4; index2++) {
+    for (let index2 = 0; index2 < 6; index2++) {
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
       element2.classList.add("brick");
@@ -236,23 +255,19 @@ function collisionDetection() {
   let visibleBricks = 0;
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
-    if ((x > brick.x - 50 && x < brick.x && y + 50 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx > 0) ||
-      (x > brick.x + brick.width + 50 && x < brick.x + brick.width - 50 && y + 50 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx < 0)) {
+    if ((x > brick.x - 20 && x < brick.x && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx > 0) ||
+      (x < brick.x + brick.width && x + 15 > brick.x + brick.width && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML === "visible" && dx < 0)) {
       bricks[c].innerHTML = "hidden"
       bricks[c].style.opacity = "0"
       ballDirection.dx = -dx;
-      visibleBricks++;
       score += 100;
       drawScore();
-      break
-    } else if ((x > brick.x || x - 50 > brick.x) && (x < brick.x + brick.width || x + 50 < brick.x + brick.width) && (y > brick.y || y + 50 > brick.y) && (y < brick.y + brick.height || y + 50 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
+    } else if ((x > brick.x || x - 20 > brick.x) && (x < brick.x + brick.width || x + 40 < brick.x + brick.width) && (y > brick.y || y + 40 > brick.y) && (y < brick.y + brick.height || y + 40 < brick.y + brick.height) && bricks[c].innerHTML === "visible") {
       bricks[c].innerHTML = "hidden"
       bricks[c].style.opacity = "0"
       ballDirection.dy = -dy;
-      visibleBricks++;
       score += 100;
       drawScore();
-      break
     }
     if (bricks[c].innerHTML === "visible") {
       visibleBricks++;
@@ -260,10 +275,23 @@ function collisionDetection() {
   }
   if (visibleBricks === 0) {
     alert("You Win!");
+    const scoreHTML = document.querySelector("#score");
+    scoreHTML.style.fontSize = 200
     resetGame()
     document.location.reload();
   }
 }
+
+//cheatmode
+/* document.addEventListener('mousemove', function (e) {
+  if (document.getElementsByClassName('circleBase circle1').length !== 0) {
+    const { ball } = getDimensions();
+    const radius = ball.width / 2;
+
+    ballHTML.style.left = `${e.clientX - radius}px`;
+    ballHTML.style.top = `${e.clientY - radius}px`;
+  }
+}) */
 
 const drawScore = () => {
   const scoreHTML = document.querySelector("#score");
