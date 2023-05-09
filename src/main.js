@@ -5,7 +5,7 @@ const platformHTML = document.getElementById("platform");
 const showButton = document.getElementById("showDialog");
 const favDialog = document.getElementById("favDialog");
 const outputBox = document.querySelector("output");
-const selectEl = favDialog.querySelector("cancel");
+const continueBtn = favDialog.querySelector("#continue");
 const confirmBtn = favDialog.querySelector("#reset");
 
 let isPaused = false;
@@ -52,6 +52,9 @@ const initialize = () => {
 
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
+  favDialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+  });
 
   build();
   drawScore()
@@ -64,6 +67,8 @@ const initialize = () => {
 };
 
 const keyDownHandler = (e) => {
+  // if (isPaused) return;
+
   if (e.key == "Right" || e.key == "ArrowRight") {
     keys.rightPressed = true;
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -165,8 +170,8 @@ const drawBall = () => {
 const resetBall = () => {
   ballHTML.style.left = `${Math.ceil(
     platformHTML.getBoundingClientRect().left +
-    platformHTML.offsetWidth / 2 -
-    ballHTML.offsetWidth / 2
+      platformHTML.offsetWidth / 2 -
+      ballHTML.offsetWidth / 2
   )}px`;
   ballHTML.style.top = `${Math.ceil(
     platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
@@ -220,7 +225,6 @@ const drawPlatform = () => {
     ballHTML.style.left = `${platformCenter - radius}px`;
   }
 }; */
-
 
 const moveBallWithPlatform = () => {
   const { ball, platform } = getDimensions();
@@ -309,16 +313,16 @@ function collisionDetection() {
   }
 }
 
-//cheatmode
-/* document.addEventListener('mousemove', function (e) {
-  if (document.getElementsByClassName('circleBase circle1').length !== 0) {
-    const { ball } = getDimensions();
-    const radius = ball.width / 2;
+// //cheatmode
+// document.addEventListener("mousemove", function (e) {
+//   if (document.getElementsByClassName("circleBase circle1").length !== 0) {
+//     const { ball } = getDimensions();
+//     const radius = ball.width / 2;
 
-    ballHTML.style.left = `${e.clientX - radius}px`;
-    ballHTML.style.top = `${e.clientY - radius}px`;
-  }
-}) */
+//     ballHTML.style.left = `${e.clientX - radius}px`;
+//     ballHTML.style.top = `${e.clientY - radius}px`;
+//   }
+// });
 
 const drawScore = () => {
   const scoreHTML = document.querySelector("#score");
@@ -378,7 +382,6 @@ const renderGame = () => {
   animation = window.requestAnimationFrame(() => renderGame());
 };
 
-// setInterval(updateTimer, 1000);
 initialize();
 renderGame();
 
@@ -387,16 +390,14 @@ document.addEventListener(
   (e) => {
     ballHTML = document.querySelector(".circle1");
 
-    if (e.key == "p") {
+    if (e.key == "Escape") {
       window.cancelAnimationFrame(animation);
 
       isPaused = !isPaused;
       if (isPaused) {
         favDialog.showModal();
         ballHTML = document.querySelector(".circle1");
-        console.log(ballHTML.getBoundingClientRect(), ballDirection);
       } else {
-        console.log(ballHTML.getBoundingClientRect(), ballDirection);
         favDialog.close();
         renderGame();
       }
@@ -407,6 +408,12 @@ document.addEventListener(
 
 confirmBtn.addEventListener("click", () => {
   document.location.reload();
+});
+
+continueBtn.addEventListener("click", () => {
+  isPaused = false;
+  favDialog.close();
+  renderGame();
 });
 
 // "Confirm" button triggers "close" on dialog because of [method="dialog"]

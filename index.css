@@ -99,6 +99,9 @@ dialog {
   box-shadow: 5px 10px #888888;
   border-radius: 8px;
   border: none;
+  width: 10vw;
+  height: 25vh;
+  
 }
 
 dialog header {
@@ -107,9 +110,19 @@ dialog header {
   justify-content: space-between;
 }
 
-#cancel {
+#continue {
   background-color: red;
   border: none;
+  color: white;
+  padding: 12px 32px;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+#reset {  
+  background-color: rgb(55, 0, 255);
+  border: none; 
   color: white;
   padding: 12px 32px;
   font-size: 16px;
