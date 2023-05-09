@@ -4,12 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="index.css">
 
     <title>Back breaking game</title>
 </head>
+
+
 
 <body>
     <div id="score"></div>
@@ -22,8 +27,8 @@
             <p>Press P to continue...</p>
 
             <div>
-                <button id="cancel" value="cancel" formmethod="dialog">Continue</button>
-                <button id="reset" value="default">Reset game</button>
+                <button id="continue" value="continue" formmethod="dialog">Continue</button>
+                <button id="reset" value="reset">Reset game</button>
             </div>
         </form>
     </dialog>
