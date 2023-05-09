@@ -24,7 +24,7 @@ let lives = 3;
 let gameStarted = false;
 let score = 0;
 let intervalId;
-//let time = 0;
+let time = 0;
 let timerStarted = false;
 let allBricksCleared = false;
 
@@ -343,7 +343,7 @@ const updateTimer = () => {
 }
 
 const startTimer = () => {
-  time = 0;
+  // time = 0;
   intervalId = setInterval(updateTimer, 1000);
 };
 
@@ -395,9 +395,11 @@ document.addEventListener(
 
       isPaused = !isPaused;
       if (isPaused) {
+        stopTimer();
         favDialog.showModal();
         ballHTML = document.querySelector(".circle1");
       } else {
+        startTimer();
         favDialog.close();
         renderGame();
       }
