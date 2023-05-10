@@ -23,8 +23,10 @@ const keys = {
 let lives = 3;
 let gameStarted = false;
 let score = 0;
+let intervalId;
 let time = 0;
 let timerStarted = false;
+let allBricksCleared = false;
 
 const getDimensions = () => {
   let obj = {};
@@ -78,7 +80,8 @@ const keyDownHandler = (e) => {
     ballDirection.dy = 2;
     if (!timerStarted) {
       timerStarted = true;
-      setInterval(updateTimer, 1000);
+      startTimer();
+      // setInterval(updateTimer, 1000);
     }
   }
 
@@ -147,8 +150,9 @@ const drawBall = () => {
       if (lives <= 0) {
         // alert("Game over");
         window.cancelAnimationFrame(renderGame);
-        resetGame();
-        document.location.reload();
+        showFinalScore()
+        //resetGame();
+        //document.location.reload();
         return;
       } else {
         // alert("You lost a life. You have " + lives + " lives left.");
@@ -262,6 +266,11 @@ function collisionDetection() {
   const { dx, dy } = ballDirection;
   const { x, y } = ball;
   let visibleBricks = 0;
+
+  if (allBricksCleared) {
+    return;
+  }
+
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
     if ((x > brick.x - 20 && x < brick.x && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx > 0) ||
@@ -293,10 +302,14 @@ function collisionDetection() {
     }
   }
   if (visibleBricks === 0) {
+    allBricksCleared = true;
     score += lives * 500
-    alert("You Win!");
-    resetGame()
-    document.location.reload();
+    stopTimer();
+    //alert("You Win!");
+    window.cancelAnimationFrame(renderGame);
+    //resetGame();
+    showFinalScore();
+    //document.location.reload();
   }
 }
 
@@ -329,6 +342,32 @@ const updateTimer = () => {
   time++;
 }
 
+const startTimer = () => {
+  // time = 0;
+  intervalId = setInterval(updateTimer, 1000);
+};
+
+const stopTimer = () => {
+  clearInterval(intervalId);
+};
+
+const showFinalScore = () => {
+  const finalScoreHTML = document.createElement("div");
+  finalScoreHTML.id = "final-score";
+  finalScoreHTML.innerHTML = `Final Score: ${score}<br><br>Press spacebar to start new game!`;
+  document.body.appendChild(finalScoreHTML);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.code === "Space") {
+      if (document.getElementById("final-score")) {
+        document.getElementById("final-score").remove();
+        resetGame();
+        document.location.reload();
+      }
+    }
+  });
+};
+
 const resetGame = () => {
   initialize();
   lives = 3;
@@ -356,9 +395,11 @@ document.addEventListener(
 
       isPaused = !isPaused;
       if (isPaused) {
+        stopTimer();
         favDialog.showModal();
         ballHTML = document.querySelector(".circle1");
       } else {
+        startTimer();
         favDialog.close();
         renderGame();
       }
