@@ -351,7 +351,7 @@ document.addEventListener(
   (e) => {
     ballHTML = document.querySelector(".circle1");
 
-    if (e.key == "Escape") {
+    if (e.key == "Escape" || e.key == "p") {
       window.cancelAnimationFrame(animation);
 
       isPaused = !isPaused;
