@@ -50,12 +50,6 @@ const initialize = () => {
     platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
   )}px`;
 
-  document.addEventListener("keydown", keyDownHandler, false);
-  document.addEventListener("keyup", keyUpHandler, false);
-  favDialog.addEventListener("cancel", (event) => {
-    event.preventDefault();
-  });
-
   build();
   drawScore()
   drawLives()
@@ -356,34 +350,23 @@ const showFinalScore = () => {
   finalScoreHTML.id = "final-score";
   finalScoreHTML.innerHTML = `Final Score: ${score}<br><br>Press spacebar to start new game!`;
   document.body.appendChild(finalScoreHTML);
+};
 
-  document.addEventListener("keydown", (event) => {
-    if (event.code === "Space") {
-      if (document.getElementById("final-score")) {
-        document.getElementById("final-score").remove();
-        resetGame();
-        document.location.reload();
-      }
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    if (document.getElementById("final-score")) {
+      document.getElementById("final-score").remove();
+      resetGame();
+      document.location.reload();
     }
-  });
-};
+  }
+});
 
-const resetGame = () => {
-  initialize();
-  lives = 3;
-  gameStarted = false;
-};
-
-let animation;
-const renderGame = () => {
-  drawBall();
-  drawPlatform();
-  collisionDetection();
-  animation = window.requestAnimationFrame(() => renderGame());
-};
-
-initialize();
-renderGame();
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+favDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+});
 
 document.addEventListener(
   "keydown",
@@ -417,6 +400,25 @@ continueBtn.addEventListener("click", () => {
   favDialog.close();
   renderGame();
 });
+
+const resetGame = () => {
+  initialize();
+  lives = 3;
+  gameStarted = false;
+};
+
+let animation;
+const renderGame = () => {
+  drawBall();
+  drawPlatform();
+  collisionDetection();
+  animation = window.requestAnimationFrame(() => renderGame());
+};
+
+initialize();
+renderGame();
+
+
 
 // "Confirm" button triggers "close" on dialog because of [method="dialog"]
 // favDialog.addEventListener("close", () => {
