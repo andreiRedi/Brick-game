@@ -1,6 +1,9 @@
 let ballHTML = document.querySelector(".circle1");
 const boardHTML = document.querySelector(".game");
 const platformHTML = document.getElementById("platform");
+const scoreHTML = document.querySelector("#score");
+const livesHTML = document.querySelector("#lives");
+const timerHTML = document.querySelector("#timer");
 
 const showButton = document.getElementById("showDialog");
 const favDialog = document.getElementById("favDialog");
@@ -9,10 +12,15 @@ const continueBtn = favDialog.querySelector("#continue");
 const confirmBtn = favDialog.querySelector("#reset");
 
 let isPaused = false;
+let gameOVer = false;
 
-window.addEventListener("load", () => {
-  initialize();
-});
+const startGame = () => {
+  window.addEventListener("load", () => {
+    initialize();
+    renderGame();
+  });
+}
+
 
 const ballDirection = { dx: 0, dy: 0 };
 const keys = {
@@ -39,8 +47,6 @@ const getDimensions = () => {
 };
 
 const initialize = () => {
-  const sizes = getDimensions();
-
   ballHTML.style.left = `${Math.ceil(
     platformHTML.getBoundingClientRect().left +
     platformHTML.offsetWidth / 2 -
@@ -51,17 +57,12 @@ const initialize = () => {
   )}px`;
 
   build();
-  drawScore()
-  drawLives()
-
-  // "Show the dialog" button opens the <dialog> modally
-  // showButton.addEventListener("click", () => {
-  //   favDialog.showModal();
-  // });
+  scoreHTML.innerHTML = `Score: ${score}`;
+  livesHTML.innerHTML = `Lives: ${lives}`;
 };
 
 const keyDownHandler = (e) => {
-  // if (isPaused) return;
+  if (isPaused || gameOVer) return;
 
   if (e.key == "Right" || e.key == "ArrowRight") {
     keys.rightPressed = true;
@@ -137,19 +138,14 @@ const drawBall = () => {
         ballDirection.dx = -4
         ballDirection.dy = -1
       }
-      //ballDirection.dy = -dy;
     } else if (bottom + dy > board.bottom) {
       lives--;
-      drawLives();
+      livesHTML.innerHTML = lives;
       if (lives <= 0) {
-        // alert("Game over");
-        window.cancelAnimationFrame(renderGame);
+        gameOVer = true;
         showFinalScore()
-        //resetGame();
-        //document.location.reload();
         return;
       } else {
-        // alert("You lost a life. You have " + lives + " lives left.");
         resetBall();
         gameStarted = false;
         return;
@@ -164,8 +160,8 @@ const drawBall = () => {
 const resetBall = () => {
   ballHTML.style.left = `${Math.ceil(
     platformHTML.getBoundingClientRect().left +
-      platformHTML.offsetWidth / 2 -
-      ballHTML.offsetWidth / 2
+    platformHTML.offsetWidth / 2 -
+    ballHTML.offsetWidth / 2
   )}px`;
   ballHTML.style.top = `${Math.ceil(
     platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
@@ -177,7 +173,6 @@ const resetBall = () => {
 const drawPlatform = () => {
   const platformRect = platformHTML.getBoundingClientRect();
   const platformLeft = platformRect.left;
-
   const { board, platform } = getDimensions();
   const radius = ballHTML.offsetWidth / 2;
   const platformCenter = platform.left + platform.width / 2;
@@ -196,29 +191,6 @@ const drawPlatform = () => {
     ballHTML.style.left = `${platformCenter - radius}px`;
   }
 };
-
-/* const drawPlatform = () => {
-  const platformRect = platformHTML.getBoundingClientRect();
-  const platformWidth = platformHTML.offsetWidth;
-  const platformCenter = platformRect.left + platformWidth / 2;
-
-  const { board, platform } = getDimensions();
-  const radius = ballHTML.offsetWidth / 2;
-
-  if (keys.rightPressed && platform.right <= board.right) {
-    platformHTML.style.left = `${platformRect.left + 5}px`;
-    if (!gameStarted) {
-      ballHTML.style.left = `${platformCenter - radius}px`;
-    }
-  } else if (keys.leftPressed && platform.left >= board.left) {
-    platformHTML.style.left = `${platformRect.left - 5}px`;
-    if (!gameStarted) {
-      ballHTML.style.left = `${platformCenter - radius}px`;
-    }
-  } else if (!gameStarted) {
-    ballHTML.style.left = `${platformCenter - radius}px`;
-  }
-}; */
 
 const moveBallWithPlatform = () => {
   const { ball, platform } = getDimensions();
@@ -243,6 +215,11 @@ const build = () => {
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
       element2.classList.add("brick");
+      if (index === 0 || index === 14) {
+        element2.innerHTML = "hidden";
+        element.appendChild(element2);
+        continue
+      }
       element2.classList.add("one");
       element2.innerHTML = "1";
       if (brickIndex % 2 === 1) {
@@ -259,16 +236,17 @@ function collisionDetection() {
   const { ball } = getDimensions();
   const { dx, dy } = ballDirection;
   const { x, y } = ball;
+  const radius = ball.width;
   let visibleBricks = 0;
-
   if (allBricksCleared) {
     return;
   }
-
+  let collisioned = false;
   for (let c = 0; c < bricks.length; c++) {
     let brick = bricks[c].getBoundingClientRect()
-    if ((x > brick.x - 20 && x < brick.x && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx > 0) ||
-      (x < brick.x + brick.width && x + 15 > brick.x + brick.width && y + 40 > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx < 0)) {
+    if ((!collisioned && x > brick.x - radius && x < brick.x && y + radius > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx > 0) ||
+      (!collisioned && x < brick.x + brick.width && x + radius / 2 > brick.x + brick.width && y + radius > brick.y && y < brick.y + brick.height && bricks[c].innerHTML !== "hidden" && dx < 0)) {
+      collisioned = true;
       if (bricks[c].innerHTML === "2") {
         bricks[c].innerHTML = "1"
         bricks[c].classList.remove("two")
@@ -278,8 +256,9 @@ function collisionDetection() {
       }
       ballDirection.dx = -dx;
       score += 100;
-      drawScore();
-    } else if ((x > brick.x || x - 20 > brick.x) && (x < brick.x + brick.width || x + 40 < brick.x + brick.width) && (y > brick.y || y + 40 > brick.y) && (y < brick.y + brick.height || y + 40 < brick.y + brick.height) && bricks[c].innerHTML !== "hidden") {
+      scoreHTML.innerHTML = score;
+    } else if (!collisioned && (x + radius / 2 > brick.x) && (x < brick.x + brick.width) && (y + radius > brick.y) && (y < brick.y + brick.height) && bricks[c].innerHTML !== "hidden") {
+      collisioned = true;
       if (bricks[c].innerHTML === "2") {
         bricks[c].innerHTML = "1"
         bricks[c].classList.remove("two")
@@ -289,7 +268,7 @@ function collisionDetection() {
       }
       ballDirection.dy = -dy;
       score += 100;
-      drawScore();
+      scoreHTML.innerHTML = score;
     }
     if (bricks[c].innerHTML !== "hidden") {
       visibleBricks++;
@@ -299,37 +278,23 @@ function collisionDetection() {
     allBricksCleared = true;
     score += lives * 500
     stopTimer();
-    //alert("You Win!");
-    window.cancelAnimationFrame(renderGame);
-    //resetGame();
+    gameOVer = true;
     showFinalScore();
-    //document.location.reload();
   }
 }
 
 // //cheatmode
-// document.addEventListener("mousemove", function (e) {
-//   if (document.getElementsByClassName("circleBase circle1").length !== 0) {
-//     const { ball } = getDimensions();
-//     const radius = ball.width / 2;
+/* document.addEventListener("mousemove", function (e) {
+  if (document.getElementsByClassName("circleBase circle1").length !== 0) {
+    const { ball } = getDimensions();
+    const radius = ball.width / 2;
 
-//     ballHTML.style.left = `${e.clientX - radius}px`;
-//     ballHTML.style.top = `${e.clientY - radius}px`;
-//   }
-// });
-
-const drawScore = () => {
-  const scoreHTML = document.querySelector("#score");
-  scoreHTML.innerHTML = `Score: ${score}`;
-}
-
-const drawLives = () => {
-  const scoreHTML = document.querySelector("#lives");
-  scoreHTML.innerHTML = `Lives: ${lives}`;
-}
+    ballHTML.style.left = `${e.clientX - radius}px`;
+    ballHTML.style.top = `${e.clientY - radius}px`;
+  }
+}); */
 
 const updateTimer = () => {
-  const timerHTML = document.querySelector("#timer");
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
   timerHTML.innerHTML = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
@@ -362,6 +327,24 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+const resetGame = () => {
+  initialize();
+  lives = 3;
+  gameStarted = false;
+};
+let animation;
+let timeoutId;
+const fps = 144;
+const renderGame = () => {
+  if (gameOVer) return
+  drawBall();
+  drawPlatform();
+  collisionDetection();
+
+  timeoutId = setTimeout(() => {
+    animation = window.requestAnimationFrame(() => renderGame());
+  }, 1000 / fps);
+}
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 favDialog.addEventListener("cancel", (event) => {
@@ -371,10 +354,8 @@ favDialog.addEventListener("cancel", (event) => {
 document.addEventListener(
   "keydown",
   (e) => {
-    ballHTML = document.querySelector(".circle1");
-
     if (e.key == "Escape" || e.key == "p") {
-      window.cancelAnimationFrame(animation);
+      clearTimeout(timeoutId)
 
       isPaused = !isPaused;
       if (isPaused) {
@@ -399,27 +380,9 @@ continueBtn.addEventListener("click", () => {
   isPaused = false;
   favDialog.close();
   renderGame();
-});
+}); 
 
-const resetGame = () => {
-  initialize();
-  lives = 3;
-  gameStarted = false;
-};
-
-let animation;
-const renderGame = () => {
-  drawBall();
-  drawPlatform();
-  collisionDetection();
-  animation = window.requestAnimationFrame(() => renderGame());
-};
-
-initialize();
-renderGame();
-
-
-
+startGame();
 // "Confirm" button triggers "close" on dialog because of [method="dialog"]
 // favDialog.addEventListener("close", () => {
 //   renderGame();
