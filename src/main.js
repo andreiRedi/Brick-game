@@ -1,5 +1,5 @@
-let ballHTML = document.querySelector(".circle1");
-const boardHTML = document.querySelector(".game");
+let ballHTML = document.getElementById("circle1");
+const boardHTML = document.querySelector("#game");
 const platformHTML = document.getElementById("platform");
 
 const showButton = document.getElementById("showDialog");
@@ -10,9 +10,12 @@ const confirmBtn = favDialog.querySelector("#reset");
 
 let isPaused = false;
 
-window.addEventListener("load", () => {
-  initialize();
-});
+const startGame = () => {
+  window.addEventListener("load", () => {
+    initialize();
+    renderGame();
+  });
+}
 
 const ballDirection = { dx: 0, dy: 0 };
 const keys = {
@@ -59,6 +62,7 @@ const initialize = () => {
   build();
   drawScore()
   drawLives()
+  drawTime()
 
   // "Show the dialog" button opens the <dialog> modally
   // showButton.addEventListener("click", () => {
@@ -81,7 +85,6 @@ const keyDownHandler = (e) => {
     if (!timerStarted) {
       timerStarted = true;
       startTimer();
-      // setInterval(updateTimer, 1000);
     }
   }
 
@@ -148,14 +151,10 @@ const drawBall = () => {
       lives--;
       drawLives();
       if (lives <= 0) {
-        // alert("Game over");
         window.cancelAnimationFrame(renderGame);
         showFinalScore()
-        //resetGame();
-        //document.location.reload();
         return;
       } else {
-        // alert("You lost a life. You have " + lives + " lives left.");
         resetBall();
         gameStarted = false;
         return;
@@ -170,8 +169,8 @@ const drawBall = () => {
 const resetBall = () => {
   ballHTML.style.left = `${Math.ceil(
     platformHTML.getBoundingClientRect().left +
-      platformHTML.offsetWidth / 2 -
-      ballHTML.offsetWidth / 2
+    platformHTML.offsetWidth / 2 -
+    ballHTML.offsetWidth / 2
   )}px`;
   ballHTML.style.top = `${Math.ceil(
     platformHTML.getBoundingClientRect().top - ballHTML.offsetHeight
@@ -202,29 +201,6 @@ const drawPlatform = () => {
     ballHTML.style.left = `${platformCenter - radius}px`;
   }
 };
-
-/* const drawPlatform = () => {
-  const platformRect = platformHTML.getBoundingClientRect();
-  const platformWidth = platformHTML.offsetWidth;
-  const platformCenter = platformRect.left + platformWidth / 2;
-
-  const { board, platform } = getDimensions();
-  const radius = ballHTML.offsetWidth / 2;
-
-  if (keys.rightPressed && platform.right <= board.right) {
-    platformHTML.style.left = `${platformRect.left + 5}px`;
-    if (!gameStarted) {
-      ballHTML.style.left = `${platformCenter - radius}px`;
-    }
-  } else if (keys.leftPressed && platform.left >= board.left) {
-    platformHTML.style.left = `${platformRect.left - 5}px`;
-    if (!gameStarted) {
-      ballHTML.style.left = `${platformCenter - radius}px`;
-    }
-  } else if (!gameStarted) {
-    ballHTML.style.left = `${platformCenter - radius}px`;
-  }
-}; */
 
 const moveBallWithPlatform = () => {
   const { ball, platform } = getDimensions();
@@ -305,17 +281,14 @@ function collisionDetection() {
     allBricksCleared = true;
     score += lives * 500
     stopTimer();
-    //alert("You Win!");
     window.cancelAnimationFrame(renderGame);
-    //resetGame();
     showFinalScore();
-    //document.location.reload();
   }
 }
 
 // //cheatmode
 // document.addEventListener("mousemove", function (e) {
-//   if (document.getElementsByClassName("circleBase circle1").length !== 0) {
+//   if (document.getElementsByClassName("circle1").length !== 0) {
 //     const { ball } = getDimensions();
 //     const radius = ball.width / 2;
 
@@ -334,6 +307,13 @@ const drawLives = () => {
   scoreHTML.innerHTML = `Lives: ${lives}`;
 }
 
+const drawTime = () => {
+  const showtimerHTML = document.createElement("div");
+  showtimerHTML.id = "timer";
+  showtimerHTML.innerHTML = "00:00";
+  document.body.appendChild(showtimerHTML);
+}
+
 const updateTimer = () => {
   const timerHTML = document.querySelector("#timer");
   const minutes = Math.floor(time / 60);
@@ -343,7 +323,6 @@ const updateTimer = () => {
 }
 
 const startTimer = () => {
-  // time = 0;
   intervalId = setInterval(updateTimer, 1000);
 };
 
@@ -382,13 +361,12 @@ const renderGame = () => {
   animation = window.requestAnimationFrame(() => renderGame());
 };
 
-initialize();
-renderGame();
+startGame();
 
 document.addEventListener(
   "keydown",
   (e) => {
-    ballHTML = document.querySelector(".circle1");
+    ballHTML = document.getElementById("circle1");
 
     if (e.key == "Escape" || e.key == "p") {
       window.cancelAnimationFrame(animation);
@@ -397,7 +375,7 @@ document.addEventListener(
       if (isPaused) {
         stopTimer();
         favDialog.showModal();
-        ballHTML = document.querySelector(".circle1");
+        ballHTML = document.getElementById("circle1");
       } else {
         startTimer();
         favDialog.close();
