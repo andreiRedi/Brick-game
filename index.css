@@ -86,10 +86,6 @@ body {
   background: #4bc475;
 }
 
-dialog {
-  cursor: pointer;
-}
-
 dialog::backdrop {
   opacity: 0.5;
   background-color: rgb(97, 4, 4);
@@ -97,12 +93,16 @@ dialog::backdrop {
 }
 
 dialog {
-  box-shadow: 5px 10px #888888;
   border-radius: 8px;
   border: none;
-  width: 10vw;
-  height: 25vh;
+
+  cursor: pointer;
+  background-color: transparent;
   
+  font-size: 32px;
+  color: white;
+ 
+  text-align: center;
 }
 
 dialog header {
