@@ -3,7 +3,7 @@ const boardHTML = document.querySelector("#game");
 const platformHTML = document.getElementById("platform");
 const scoreHTML = document.querySelector("#score");
 const livesHTML = document.querySelector("#lives");
-const timerHTML = document.querySelector("#timer");
+
 
 const showButton = document.getElementById("showDialog");
 const favDialog = document.getElementById("favDialog");
@@ -63,8 +63,10 @@ const initialize = () => {
   });
 
   build();
+  drawTime();
   scoreHTML.innerHTML = `Score: ${score}`;
   livesHTML.innerHTML = `Lives: ${lives}`;
+
 };
 
 const keyDownHandler = (e) => {
@@ -299,18 +301,15 @@ function collisionDetection() {
 //   }
 // });
 
-const drawScore = () => {
-  const scoreHTML = document.querySelector("#score");
-  scoreHTML.innerHTML = `Score: ${score}`;
+const drawTime = () => {
+  const showtimerHTML = document.createElement("div");
+  showtimerHTML.id = "timer";
+  showtimerHTML.innerHTML = "00:00";
+  document.body.appendChild(showtimerHTML);
 }
-
-const drawLives = () => {
-  const scoreHTML = document.querySelector("#lives");
-  scoreHTML.innerHTML = `Lives: ${lives}`;
-}
-
 
 const updateTimer = () => {
+  const timerHTML = document.querySelector("#timer");
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
   timerHTML.innerHTML = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
