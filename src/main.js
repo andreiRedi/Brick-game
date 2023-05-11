@@ -1,3 +1,22 @@
+let fps;
+function calcFPS(opts) {
+  let requestFrame = window.requestAnimationFrame
+  if (!requestFrame) return true; // Check if "true" is returned; 
+  // pick default FPS, show error, etc...
+  function checker() {
+    if (index--) requestFrame(checker);
+    else {
+      let result = count * 1000 / (performance.now() - start);
+      if (typeof opts.callback === "function") opts.callback(result);
+      console.log("Calculated: " + result + " frames per second");
+      fps = result;
+    }
+  }
+  if (!opts) opts = {};
+  var count = opts.count || 60, index = count, start = performance.now();
+  checker();
+}
+calcFPS()
 let ballHTML = document.getElementById("circle1");
 const boardHTML = document.querySelector("#game");
 const platformHTML = document.getElementById("platform");
@@ -65,6 +84,7 @@ const initialize = () => {
   livesHTML.innerHTML = `Lives: ${lives}`; 
 
   startDialog.showModal();
+  
 };
 
 const keyDownHandler = (e) => {
@@ -130,24 +150,26 @@ const drawBall = () => {
     ballDirection.dy = -dy;
   } else if (bottom + dy > platform.top) {
     if (x > platform.x && x < platform.x + platform.width) {
+      if (isNaN(fps)) fps = 100
+      let fpsCorrection = fps / 60
       if (x > platform.x + platform.width - platform.width / 6 * 1) {
-        ballDirection.dx = 8
-        ballDirection.dy = -2
+        ballDirection.dx = 8 / fpsCorrection
+        ballDirection.dy = -(2 / fpsCorrection)
       } else if (x > platform.x + platform.width - platform.width / 6 * 2) {
-        ballDirection.dx = 6
-        ballDirection.dy = -6
+        ballDirection.dx = 6 / fpsCorrection
+        ballDirection.dy = -(6 / fpsCorrection)
       } else if (x > platform.x + platform.width - platform.width / 6 * 3) {
-        ballDirection.dx = 1
-        ballDirection.dy = -8
+        ballDirection.dx = 1 / fpsCorrection
+        ballDirection.dy = -(8 / fpsCorrection)
       } else if (x > platform.x + platform.width - platform.width / 6 * 4) {
-        ballDirection.dx = -1
-        ballDirection.dy = -8
+        ballDirection.dx = -(1 / fpsCorrection)
+        ballDirection.dy = -(8 / fpsCorrection)
       } else if (x > platform.x + platform.width - platform.width / 6 * 5) {
-        ballDirection.dx = -6
-        ballDirection.dy = -6
+        ballDirection.dx = -(6 / fpsCorrection)
+        ballDirection.dy = -(6 / fpsCorrection)
       } else {
-        ballDirection.dx = -8
-        ballDirection.dy = -2
+        ballDirection.dx = -(8 / fpsCorrection)
+        ballDirection.dy = -(2 / fpsCorrection)
       }
     } else if (bottom + dy > board.bottom) {
       lives--;
@@ -352,17 +374,13 @@ const resetGame = () => {
   gameStarted = false;
 };
 let animation;
-let timeoutId;
-const fps = 60;
+
 const renderGame = () => {
   if (gameOVer) return
   drawBall();
   drawPlatform();
   collisionDetection();
-
-  timeoutId = setTimeout(() => {
-    animation = window.requestAnimationFrame(() => renderGame());
-  }, 1000 / fps);
+  animation = window.requestAnimationFrame(() => renderGame());
 }
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
