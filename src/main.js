@@ -370,6 +370,7 @@ document.addEventListener(
 
       isPaused = !isPaused;
       if (isPaused) {
+        window.cancelAnimationFrame(animation);
         stopTimer();
         favDialog.showModal();
         ballHTML = document.getElementById("circle1");
