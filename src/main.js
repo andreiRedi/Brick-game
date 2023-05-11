@@ -110,7 +110,7 @@ const drawBall = () => {
 
   const radius = ball.width / 2;
 
-  if (right + dx > board.width || x + dx < 0) {
+  if (right + dx > board.width || x + dx < 20) {
     ballDirection.dx = -dx;
   }
 
@@ -126,27 +126,27 @@ const drawBall = () => {
   } else if (bottom + dy > platform.top) {
     if (x > platform.x && x < platform.x + platform.width) {
       if (x > platform.x + platform.width - platform.width / 6 * 1) {
-        ballDirection.dx = 4
-        ballDirection.dy = -1
+        ballDirection.dx = 8
+        ballDirection.dy = -2
       } else if (x > platform.x + platform.width - platform.width / 6 * 2) {
-        ballDirection.dx = 2.5
-        ballDirection.dy = -1.5
+        ballDirection.dx = 6
+        ballDirection.dy = -6
       } else if (x > platform.x + platform.width - platform.width / 6 * 3) {
         ballDirection.dx = 1
-        ballDirection.dy = -3
+        ballDirection.dy = -8
       } else if (x > platform.x + platform.width - platform.width / 6 * 4) {
         ballDirection.dx = -1
-        ballDirection.dy = -3
+        ballDirection.dy = -8
       } else if (x > platform.x + platform.width - platform.width / 6 * 5) {
-        ballDirection.dx = -2.5
-        ballDirection.dy = -1.5
+        ballDirection.dx = -6
+        ballDirection.dy = -6
       } else {
-        ballDirection.dx = -4
-        ballDirection.dy = -1
+        ballDirection.dx = -8
+        ballDirection.dy = -2
       }
     } else if (bottom + dy > board.bottom) {
       lives--;
-      livesHTML.innerHTML = lives;
+      livesHTML.innerHTML = `Lives: ${lives}`;
       if (lives <= 0) {
         gameOVer = true;
         showFinalScore()
@@ -262,7 +262,7 @@ function collisionDetection() {
       }
       ballDirection.dx = -dx;
       score += 100;
-      scoreHTML.innerHTML = score;
+      scoreHTML.innerHTML = `Score: ${score}`;
     } else if (!collisioned && (x + radius / 2 > brick.x) && (x < brick.x + brick.width) && (y + radius > brick.y) && (y < brick.y + brick.height) && bricks[c].innerHTML !== "hidden") {
       collisioned = true;
       if (bricks[c].innerHTML === "2") {
@@ -274,7 +274,7 @@ function collisionDetection() {
       }
       ballDirection.dy = -dy;
       score += 100;
-      scoreHTML.innerHTML = score;
+      scoreHTML.innerHTML = `Score: ${score}`;
     }
     if (bricks[c].innerHTML !== "hidden") {
       visibleBricks++;
@@ -340,7 +340,7 @@ const resetGame = () => {
 };
 let animation;
 let timeoutId;
-const fps = 144;
+const fps = 60;
 const renderGame = () => {
   if (gameOVer) return
   drawBall();

@@ -10,6 +10,7 @@ body {
   right: 0;
   color: rgb(245, 247, 248);
   font-size: 25px;
+  padding-right: 20px;
 }
 
 #lives {
@@ -18,6 +19,7 @@ body {
   left: 0;
   color: rgb(245, 247, 248);
   font-size: 25px;
+  padding-left: 20px;
 }
 
 #score {
