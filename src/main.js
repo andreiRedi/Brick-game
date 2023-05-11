@@ -1,5 +1,5 @@
-let ballHTML = document.querySelector(".circle1");
-const boardHTML = document.querySelector(".game");
+let ballHTML = document.getElementById("circle1");
+const boardHTML = document.querySelector("#game");
 const platformHTML = document.getElementById("platform");
 const scoreHTML = document.querySelector("#score");
 const livesHTML = document.querySelector("#lives");
@@ -76,7 +76,6 @@ const keyDownHandler = (e) => {
     if (!timerStarted) {
       timerStarted = true;
       startTimer();
-      // setInterval(updateTimer, 1000);
     }
   }
 
@@ -104,7 +103,7 @@ const drawBall = () => {
 
   const radius = ball.width / 2;
 
-  if (right + dx > board.width || x + dx < 0) {
+  if (right + dx > board.width || x + dx < 20) {
     ballDirection.dx = -dx;
   }
 
@@ -120,27 +119,27 @@ const drawBall = () => {
   } else if (bottom + dy > platform.top) {
     if (x > platform.x && x < platform.x + platform.width) {
       if (x > platform.x + platform.width - platform.width / 6 * 1) {
-        ballDirection.dx = 4
-        ballDirection.dy = -1
+        ballDirection.dx = 8
+        ballDirection.dy = -2
       } else if (x > platform.x + platform.width - platform.width / 6 * 2) {
-        ballDirection.dx = 2.5
-        ballDirection.dy = -1.5
+        ballDirection.dx = 6
+        ballDirection.dy = -6
       } else if (x > platform.x + platform.width - platform.width / 6 * 3) {
         ballDirection.dx = 1
-        ballDirection.dy = -3
+        ballDirection.dy = -8
       } else if (x > platform.x + platform.width - platform.width / 6 * 4) {
         ballDirection.dx = -1
-        ballDirection.dy = -3
+        ballDirection.dy = -8
       } else if (x > platform.x + platform.width - platform.width / 6 * 5) {
-        ballDirection.dx = -2.5
-        ballDirection.dy = -1.5
+        ballDirection.dx = -6
+        ballDirection.dy = -6
       } else {
-        ballDirection.dx = -4
-        ballDirection.dy = -1
+        ballDirection.dx = -8
+        ballDirection.dy = -2
       }
     } else if (bottom + dy > board.bottom) {
       lives--;
-      livesHTML.innerHTML = lives;
+      livesHTML.innerHTML = `Lives: ${lives}`;
       if (lives <= 0) {
         gameOVer = true;
         showFinalScore()
@@ -256,7 +255,7 @@ function collisionDetection() {
       }
       ballDirection.dx = -dx;
       score += 100;
-      scoreHTML.innerHTML = score;
+      scoreHTML.innerHTML = `Score: ${score}`;
     } else if (!collisioned && (x + radius / 2 > brick.x) && (x < brick.x + brick.width) && (y + radius > brick.y) && (y < brick.y + brick.height) && bricks[c].innerHTML !== "hidden") {
       collisioned = true;
       if (bricks[c].innerHTML === "2") {
@@ -268,7 +267,7 @@ function collisionDetection() {
       }
       ballDirection.dy = -dy;
       score += 100;
-      scoreHTML.innerHTML = score;
+      scoreHTML.innerHTML = `Score: ${score}`;
     }
     if (bricks[c].innerHTML !== "hidden") {
       visibleBricks++;
@@ -284,15 +283,26 @@ function collisionDetection() {
 }
 
 // //cheatmode
-/* document.addEventListener("mousemove", function (e) {
-  if (document.getElementsByClassName("circleBase circle1").length !== 0) {
-    const { ball } = getDimensions();
-    const radius = ball.width / 2;
+// document.addEventListener("mousemove", function (e) {
+//   if (document.getElementsByClassName("circleBase circle1").length !== 0) {
+//     const { ball } = getDimensions();
+//     const radius = ball.width / 2;
 
-    ballHTML.style.left = `${e.clientX - radius}px`;
-    ballHTML.style.top = `${e.clientY - radius}px`;
-  }
-}); */
+//     ballHTML.style.left = `${e.clientX - radius}px`;
+//     ballHTML.style.top = `${e.clientY - radius}px`;
+//   }
+// });
+
+const drawScore = () => {
+  const scoreHTML = document.querySelector("#score");
+  scoreHTML.innerHTML = `Score: ${score}`;
+}
+
+const drawLives = () => {
+  const scoreHTML = document.querySelector("#lives");
+  scoreHTML.innerHTML = `Lives: ${lives}`;
+}
+
 
 const updateTimer = () => {
   const minutes = Math.floor(time / 60);
@@ -302,7 +312,6 @@ const updateTimer = () => {
 }
 
 const startTimer = () => {
-  // time = 0;
   intervalId = setInterval(updateTimer, 1000);
 };
 
@@ -334,7 +343,7 @@ const resetGame = () => {
 };
 let animation;
 let timeoutId;
-const fps = 144;
+const fps = 60;
 const renderGame = () => {
   if (gameOVer) return
   drawBall();
@@ -354,6 +363,8 @@ favDialog.addEventListener("cancel", (event) => {
 document.addEventListener(
   "keydown",
   (e) => {
+    ballHTML = document.getElementById("circle1");
+
     if (e.key == "Escape" || e.key == "p") {
       clearTimeout(timeoutId)
 
@@ -361,7 +372,7 @@ document.addEventListener(
       if (isPaused) {
         stopTimer();
         favDialog.showModal();
-        ballHTML = document.querySelector(".circle1");
+        ballHTML = document.getElementById("circle1");
       } else {
         startTimer();
         favDialog.close();
