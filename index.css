@@ -40,6 +40,7 @@ body {
   right: 0;
   color: rgb(245, 247, 248);
   font-size: 25px;
+  padding-right: 20px;
 }
 
 #lives {
@@ -48,6 +49,7 @@ body {
   left: 0;
   color: rgb(245, 247, 248);
   font-size: 25px;
+  padding-left: 20px;
 }
 
 #score {
@@ -69,17 +71,18 @@ body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  margin-left: 20px;
 }
 
 .brick {
-  width: 5.5vw;
+  width: 6vw;
   height: 3vh;
   background-color: #949494;
   border-radius: 2px;
   border-width: 5px;
   border-style: outset;
   opacity: 0;
-  padding-right: 10px;
+
   color: #949494;
 }
 
