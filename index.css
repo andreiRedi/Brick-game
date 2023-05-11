@@ -123,7 +123,7 @@ dialog::backdrop {
 dialog {
   border-radius: 8px;
   border: none;
-<<<<<<< HEAD
+
 
   cursor: pointer;
   background-color: transparent;
@@ -132,11 +132,9 @@ dialog {
   color: white;
  
   text-align: center;
-=======
-  width: 10vw;
-  height: 25vh;
 
->>>>>>> c3218f269c3c755c5f052493adc657db253cd90e
+
+
 }
 
 dialog header {
