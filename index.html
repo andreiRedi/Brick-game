@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.cdnfonts.com/css/arcade-classic" rel="stylesheet">
 
     <title>Back breaking game</title>
 </head>
@@ -24,11 +25,24 @@
     <!-- A modal dialog containing a form -->
     <dialog id="favDialog">
         <form method="dialog">
-            <h2>PAUSED</h2> <br>           
+            <h2>PAUSED</h2> <br>          
 
             <div>
                 <button id="continue" value="continue" formmethod="dialog">Continue</button>
                 <button id="reset" value="reset">Reset game</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="start">
+        <form method="dialog">
+            <h1>Brick breaking game</h1>  
+            <br>
+            <h3> Game is played with arrow keys </h3>
+            <h5>to pause press [p]</h5>
+            <h3>To begin press [ SPACE ]</h3>
+            <div>
+                <button id="continue" value="continue" formmethod="dialog">START</button>                
             </div>
         </form>
     </dialog>

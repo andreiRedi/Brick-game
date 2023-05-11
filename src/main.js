@@ -7,12 +7,16 @@ const livesHTML = document.querySelector("#lives");
 
 const showButton = document.getElementById("showDialog");
 const favDialog = document.getElementById("favDialog");
+const startDialog = document.getElementById("start");
 const outputBox = document.querySelector("output");
 const continueBtn = favDialog.querySelector("#continue");
 const confirmBtn = favDialog.querySelector("#reset");
 
 let isPaused = false;
 let gameOVer = false;
+let gameStarted = false;
+let welcomeScreen = true;
+
 
 const startGame = () => {
   window.addEventListener("load", () => {
@@ -29,7 +33,6 @@ const keys = {
   spacebarPressed: false,
 };
 let lives = 3;
-let gameStarted = false;
 let score = 0;
 let intervalId;
 let time = 0;
@@ -59,8 +62,9 @@ const initialize = () => {
   build();
   drawTime();
   scoreHTML.innerHTML = `Score: ${score}`;
-  livesHTML.innerHTML = `Lives: ${lives}`;
+  livesHTML.innerHTML = `Lives: ${lives}`; 
 
+  startDialog.showModal();
 };
 
 const keyDownHandler = (e) => {
@@ -70,7 +74,13 @@ const keyDownHandler = (e) => {
     keys.rightPressed = true;
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
     keys.leftPressed = true;
-  } else if (e.code === "Space" && !gameStarted) {
+  } else if (e.code === "Space" && !gameStarted ) {
+    if (startDialog.open) {
+      startDialog.close()
+      return;
+    }
+
+
     gameStarted = true;
     keys.spacebarPressed = true;
     ballDirection.dx = -2;
@@ -212,7 +222,8 @@ const build = () => {
     element.setAttribute("id", "brickRow" + index);
     element.classList.add("brickRow");
     document.getElementById("game").appendChild(element);
-    for (let index2 = 0; index2 < 6; index2++) {
+
+    for (let index2 = 0; index2 < 6; index2++) {    
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
       element2.classList.add("brick");
@@ -355,43 +366,54 @@ const renderGame = () => {
 }
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+
 favDialog.addEventListener("cancel", (event) => {
   event.preventDefault();
 });
 
 document.addEventListener(
   "keydown",
-  (e) => {
-    ballHTML = document.getElementById("circle1");
-
+  (e) => {   
     if (e.key == "Escape" || e.key == "p") {
       clearTimeout(timeoutId)
-
-      isPaused = !isPaused;
-      if (isPaused) {
-        window.cancelAnimationFrame(animation);
-        stopTimer();
-        favDialog.showModal();
-        ballHTML = document.getElementById("circle1");
-      } else {
-        startTimer();
-        favDialog.close();
-        renderGame();
-      }
+      pauseGame();
     }
   },
   false
-);
+);  
+
+const pauseGame = () => {
+  if (!gameStarted) return
+  ballHTML = document.getElementById("circle1");
+  isPaused = !isPaused;
+  if (isPaused) {
+    window.cancelAnimationFrame(animation);
+    stopTimer();
+    favDialog.showModal();
+    ballHTML = document.getElementById("circle1");
+  } else {
+    startTimer();
+    favDialog.close();
+    renderGame();
+  }
+}
 
 confirmBtn.addEventListener("click", () => {
   document.location.reload();
 });
 
-continueBtn.addEventListener("click", () => {
+continueBtn.addEventListener("click", () => {  
   isPaused = false;
   favDialog.close();
   renderGame();
 }); 
+
+
+
+document.querySelector("#start #continue").addEventListener("cancel", (event) => {
+  welcomeScreen = false;
+  renderGame();
+});
 
 startGame();
 // "Confirm" button triggers "close" on dialog because of [method="dialog"]

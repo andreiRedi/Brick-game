@@ -2,6 +2,7 @@ html,
 body {
   overflow: hidden;
   background-color: rgb(0, 0, 0);
+  font-family: 'ArcadeClassic', sans-serif;
 }
 
 #start-screen {
@@ -151,6 +152,7 @@ dialog header {
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
+  font-family: 'ArcadeClassic', sans-serif;
 }
 
 #reset {
@@ -187,4 +189,13 @@ dialog header {
   font-size: 48px;
   color: white;
   text-align: center;
+}
+
+#start h1 {
+  font-size: 100px;
+  
+}
+
+#start {
+  word-spacing: 10px;
 }
