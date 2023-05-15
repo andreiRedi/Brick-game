@@ -342,7 +342,6 @@ const updateTimer = () => {
   const seconds = time % 60;
   timerHTML.innerHTML = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
   time++;
-  console.log(time)
 }
 
 const startTimer = () => {
