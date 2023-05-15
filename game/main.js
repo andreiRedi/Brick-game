@@ -239,7 +239,7 @@ const moveBallWithPlatform = () => {
 const build = () => {
   document.querySelectorAll(".brickRow").forEach((e) => e.remove());
   let brickIndex = 0;
-  for (let index = 0; index < 15; index++) {
+  for (let index = 0; index < 10; index++) {
     let element = document.createElement("div");
     element.setAttribute("id", "brickRow" + index);
     element.classList.add("brickRow");
@@ -392,8 +392,7 @@ favDialog.addEventListener("cancel", (event) => {
 document.addEventListener(
   "keydown",
   (e) => {   
-    if (e.key == "Escape" || e.key == "p") {
-      clearTimeout(timeoutId)
+    if (e.key == "Escape" || e.key == "p") {      
       pauseGame();
     }
   },
