@@ -239,7 +239,7 @@ const moveBallWithPlatform = () => {
 const build = () => {
   document.querySelectorAll(".brickRow").forEach((e) => e.remove());
   let brickIndex = 0;
-  for (let index = 0; index < 10; index++) {
+  for (let index = 0; index < 15; index++) {
     let element = document.createElement("div");
     element.setAttribute("id", "brickRow" + index);
     element.classList.add("brickRow");
