@@ -81,10 +81,10 @@ const initialize = () => {
   build();
   drawTime();
   scoreHTML.innerHTML = `Score: ${score}`;
-  livesHTML.innerHTML = `Lives: ${lives}`; 
+  livesHTML.innerHTML = `Lives: ${lives}`;
 
   startDialog.showModal();
-  
+
 };
 
 const keyDownHandler = (e) => {
@@ -94,7 +94,7 @@ const keyDownHandler = (e) => {
     keys.rightPressed = true;
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
     keys.leftPressed = true;
-  } else if (e.code === "Space" && !gameStarted ) {
+  } else if (e.code === "Space" && !gameStarted) {
     if (startDialog.open) {
       startDialog.close()
       return;
@@ -177,6 +177,7 @@ const drawBall = () => {
       if (lives <= 0) {
         gameOVer = true;
         showFinalScore()
+        stopTimer()
         return;
       } else {
         resetBall();
@@ -245,7 +246,7 @@ const build = () => {
     element.classList.add("brickRow");
     document.getElementById("game").appendChild(element);
 
-    for (let index2 = 0; index2 < 6; index2++) {    
+    for (let index2 = 0; index2 < 6; index2++) {
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
       element2.classList.add("brick");
@@ -341,6 +342,7 @@ const updateTimer = () => {
   const seconds = time % 60;
   timerHTML.innerHTML = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
   time++;
+  console.log(time)
 }
 
 const startTimer = () => {
@@ -354,7 +356,7 @@ const stopTimer = () => {
 const showFinalScore = () => {
   const finalScoreHTML = document.createElement("div");
   finalScoreHTML.id = "final-score";
-  finalScoreHTML.innerHTML = `Final Score: ${score}<br><br>Press spacebar to start new game!`;
+  finalScoreHTML.innerHTML = `Final Score: ${score - (time * 10 - 10)}<br><br>Press spacebar to start new game!`;
   document.body.appendChild(finalScoreHTML);
 };
 
@@ -391,13 +393,13 @@ favDialog.addEventListener("cancel", (event) => {
 
 document.addEventListener(
   "keydown",
-  (e) => {   
-    if (e.key == "Escape" || e.key == "p") {      
+  (e) => {
+    if (e.key == "Escape" || e.key == "p") {
       pauseGame();
     }
   },
   false
-);  
+);
 
 const pauseGame = () => {
   if (!gameStarted) return
@@ -419,11 +421,11 @@ confirmBtn.addEventListener("click", () => {
   document.location.reload();
 });
 
-continueBtn.addEventListener("click", () => {  
+continueBtn.addEventListener("click", () => {
   isPaused = false;
   favDialog.close();
   renderGame();
-}); 
+});
 
 
 
