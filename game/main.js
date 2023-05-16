@@ -400,6 +400,10 @@ document.addEventListener(
   false
 );
 
+window.addEventListener("resize", (e) => {
+  document.location.reload();
+});
+
 const pauseGame = () => {
   if (!gameStarted) return
   ballHTML = document.getElementById("circle1");
