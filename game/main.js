@@ -246,10 +246,10 @@ const build = () => {
     element.classList.add("brickRow");
     document.getElementById("game").appendChild(element);
 
-    for (let index2 = 0; index2 < 3 ; index2++) {    
+    for (let index2 = 0; index2 < 3; index2++) {
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
-      element2.classList.add("brick");  
+      element2.classList.add("brick");
       if (index === 0 || index === 14) {
         element2.innerHTML = "hidden";
         element.appendChild(element2);
@@ -355,7 +355,7 @@ const stopTimer = () => {
 const showFinalScore = () => {
   const finalScoreHTML = document.createElement("div");
   finalScoreHTML.id = "final-score";
-  finalScoreHTML.innerHTML = `Final Score: ${score - (time * 10 - 10)}<br><br>Press spacebar to start new game!`;
+  finalScoreHTML.innerHTML = `Lives: ${lives} * 500<br>Time: ${time - 1} seconds * 10 - score <br><br>Final Score: ${score - (time * 10 - 10)}<br><br>Press spacebar to start new game!`;
   document.body.appendChild(finalScoreHTML);
 };
 
