@@ -426,6 +426,7 @@ confirmBtn.addEventListener("click", () => {
 
 continueBtn.addEventListener("click", () => {
   isPaused = false;
+    startTimer();
   favDialog.close();
   renderGame();
 });
