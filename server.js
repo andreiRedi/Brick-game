@@ -2,46 +2,42 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const port = 3000;
-const publicFolder = path.join(__dirname, 'game');
-
 const server = http.createServer((req, res) => {
-  console.log(`Request for ${req.url}`);
+  let filePath = '.' + req.url;
+  if (filePath == './')
+    filePath = './index.html';
 
-  // Determine the file path based on the URL
-  const filePath = path.join(publicFolder, req.url);
+  const extname = String(path.extname(filePath)).toLowerCase();
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+  };
 
-  // Check if the requested file exists
-  fs.access(filePath, (err) => {
-    if (err) {
-      console.error(err);
-      res.writeHead(404);
-      res.end('File not found');
-    } else {
-      // Read the file and serve it with the appropriate content type
-      fs.readFile(filePath, (err, data) => {
-        if (err) {
-          console.error(err);
-          res.writeHead(500);
-          res.end('Server error');
-        } else {
-          let contentType = 'text/plain';
-          const ext = path.extname(filePath);
-          if (ext === '.html') {
-            contentType = 'text/html';
-          } else if (ext === '.css') {
-            contentType = 'text/css';
-          } else if (ext === '.js') {
-            contentType = 'text/javascript';
-          }
-          res.writeHead(200, { 'Content-Type': contentType });
-          res.end(data);
-        }
-      });
+  const contentType = mimeTypes[extname] || 'application/octet-stream';
+
+  fs.readFile(filePath, function(error, content) {
+    if (error) {
+      if(error.code == 'ENOENT'){
+        fs.readFile('./404.html', function(error, content) {
+          res.writeHead(404, { 'Content-Type': contentType });
+          res.end(content, 'utf-8');
+        });
+      }
+      else {
+        res.writeHead(500);
+        res.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
+        res.end();
+      }
+    }
+    else {
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content, 'utf-8');
     }
   });
+
 });
 
-server.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+server.listen(3000);
+console.log('Server running at http://localhost:3000/');

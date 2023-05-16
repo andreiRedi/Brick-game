@@ -124,7 +124,7 @@ const keyUpHandler = (e) => {
   } else if (e.key == "Left" || e.key == "ArrowLeft") {
     keys.leftPressed = false;
   } else if (e.code === "Space") {
-    keys.spacebarPressed = false;
+    keys.spacebarPressed  = false;
   }
 };
 
@@ -135,7 +135,7 @@ const drawBall = () => {
 
   const radius = ball.width / 2;
 
-  if (right + dx > board.width || x + dx < 0) {
+  if (right + dx > board.width || x + dx < 0) {  // RIGHT-LEFT WALL
     ballDirection.dx = -dx;
   }
 
@@ -146,9 +146,9 @@ const drawBall = () => {
     ballDirection.dy = -dy;
   }
 
-  if (y + dy < 0) {
+  if (y + dy < 1) {  // TOP
     ballDirection.dy = -dy;
-  } else if (bottom + dy > platform.top) {
+  } else if (bottom + dy > platform.top) {  // GROUND
     if (x > platform.x && x < platform.x + platform.width) {
       if (isNaN(fps)) fps = 100
       let fpsCorrection = fps / 60
@@ -352,10 +352,10 @@ const stopTimer = () => {
   clearInterval(intervalId);
 };
 
-const showFinalScore = () => {
+const showFinalScore = () => {  
   const finalScoreHTML = document.createElement("div");
   finalScoreHTML.id = "final-score";
-  finalScoreHTML.innerHTML = `Lives: ${lives} * 500<br>Time: ${time - 1} seconds * 10 - score <br><br>Final Score: ${score - (time * 10 - 10)}<br><br>Press spacebar to start new game!`;
+  finalScoreHTML.innerHTML = `Lives: ${lives} * 500<br>Time: score - ${time - 1} seconds * 10 <br><br>Final Score: ${score - (time * 10 - 10)}<br><br>Press spacebar to start new game!`;
   document.body.appendChild(finalScoreHTML);
 };
 
