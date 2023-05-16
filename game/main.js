@@ -135,7 +135,7 @@ const drawBall = () => {
 
   const radius = ball.width / 2;
 
-  if (right + dx > board.width || x + dx < 20) {
+  if (right + dx > board.width || x + dx < 0) {
     ballDirection.dx = -dx;
   }
 
@@ -245,10 +245,10 @@ const build = () => {
     element.classList.add("brickRow");
     document.getElementById("game").appendChild(element);
 
-    for (let index2 = 0; index2 < 6; index2++) {    
+    for (let index2 = 0; index2 < 3 ; index2++) {    
       let element2 = document.createElement("div");
       element2.setAttribute("id", "brick-" + brickIndex++);
-      element2.classList.add("brick");
+      element2.classList.add("brick");  
       if (index === 0 || index === 14) {
         element2.innerHTML = "hidden";
         element.appendChild(element2);
