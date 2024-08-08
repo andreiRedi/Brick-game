@@ -1,7 +1,7 @@
 # Block breaking game  🧱🧱🧱
 [![Build Status](https://raw.githubusercontent.com/dwyl/repo-badges/4720fcd2ccfadea4715475628987cf7c95542373/svg/build-passing.svg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUNcmljayBhbmQgcm9sbA%3D%3D)  
   
-Authors: Aleksandr Lavronenko, Rain-Ander Laagus,  Andrei Redi
+Authors: Teammate, Teammate,  Andrei Redi
   
 ## Usage
   
